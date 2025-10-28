@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { aiRoutes } from './routes/ai';
+import { modernizationRoutes } from './routes/modernization';
 import { healthRoutes } from './routes/health';
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(limiter);
 
 // Routes
 app.use('/api/ai', aiRoutes);
+app.use('/api/modernization', modernizationRoutes);
 app.use('/', healthRoutes);
 
 // Start server

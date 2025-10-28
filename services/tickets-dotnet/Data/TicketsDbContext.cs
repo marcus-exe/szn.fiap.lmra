@@ -16,11 +16,18 @@ public class TicketsDbContext : DbContext
     {
         modelBuilder.Entity<Ticket>(entity =>
         {
+            entity.ToTable("tickets");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
-            entity.Property(e => e.Description).HasMaxLength(5000);
-            entity.Property(e => e.Status).HasConversion<string>().HasMaxLength(20);
-            entity.Property(e => e.Priority).HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Title).HasColumnName("title").HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Description).HasColumnName("description").HasMaxLength(5000);
+            entity.Property(e => e.Status).HasColumnName("status").HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.Priority).HasColumnName("priority").HasConversion<string>().HasMaxLength(20);
+            entity.Property(e => e.CreatedByUserId).HasColumnName("createdbyuserid");
+            entity.Property(e => e.AssignedToUserId).HasColumnName("assignedtouserid");
+            entity.Property(e => e.CreatedAt).HasColumnName("createdat");
+            entity.Property(e => e.UpdatedAt).HasColumnName("updatedat");
+            entity.Property(e => e.ClosedAt).HasColumnName("closedat");
             entity.HasMany(e => e.Comments)
                   .WithOne(c => c.Ticket)
                   .HasForeignKey(c => c.TicketId)
@@ -29,9 +36,13 @@ public class TicketsDbContext : DbContext
 
         modelBuilder.Entity<Comment>(entity =>
         {
+            entity.ToTable("comments");
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Content).HasMaxLength(2000).IsRequired();
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Content).HasColumnName("content").HasMaxLength(2000).IsRequired();
+            entity.Property(e => e.TicketId).HasColumnName("ticketid");
+            entity.Property(e => e.UserId).HasColumnName("userid");
+            entity.Property(e => e.CreatedAt).HasColumnName("createdat");
         });
     }
 }
-
