@@ -55,7 +55,7 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-900">
+    <div className="p-8">
       <div className="max-w-2xl mx-auto">
         <Link href="/tickets" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Tickets
@@ -63,7 +63,7 @@ export default function CreateTicketPage() {
         
         <h1 className="text-4xl font-bold text-gray-100 mb-8">Create New Ticket</h1>
         
-        <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg shadow p-8">
+        <form onSubmit={handleSubmit} className="bg-black border border-white/10 rounded-lg shadow p-8">
           <div className="mb-6">
             <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-2">
               Title *

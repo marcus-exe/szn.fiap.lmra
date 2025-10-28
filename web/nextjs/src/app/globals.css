@@ -18,7 +18,11 @@
 
 body {
   color: #f9fafb;
-  background: #111827;
+  background: #000000;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Markdown styling */

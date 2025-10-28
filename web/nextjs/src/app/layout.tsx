@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Arimo } from 'next/font/google';
 import './globals.css';
+import RollingSlider from '@/components/RollingSlider';
+import Footer from '@/components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const arimo = Arimo({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'LMRA - Legacy Modernization Reference Application',
@@ -19,7 +21,15 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={arimo.className}>
+        <div className="min-h-screen flex flex-col">
+          <main className="flex-1">{children}</main>
+          <div className="mt-auto">
+            <RollingSlider />
+            <Footer />
+          </div>
+        </div>
+      </body>
     </html>
   );
 }

@@ -1,20 +1,25 @@
+'use client';
+
 import Link from 'next/link';
+import DNAAnimation from '@/components/DNAAnimation';
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-8 bg-gray-900">
+    <div className="p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-4">
           Legacy Modernization Reference Application
         </h1>
-        <p className="text-xl text-gray-300 mb-8">
+        <p className="text-xl text-gray-300 mb-4">
           A comprehensive reference for modernizing legacy codebases
         </p>
+
+        <DNAAnimation />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link 
             href="/tickets"
-            className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
+            className="p-6 border border-white/10 bg-black rounded-lg hover:bg-black/80 transition-all"
           >
             <h2 className="text-2xl font-semibold mb-2">Tickets</h2>
             <p className="text-gray-300">
@@ -24,7 +29,7 @@ export default function Home() {
 
           <Link 
             href="/users"
-            className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
+            className="p-6 border border-white/10 bg-black rounded-lg hover:bg-black/80 transition-all"
           >
             <h2 className="text-2xl font-semibold mb-2">Users</h2>
             <p className="text-gray-300">
@@ -34,7 +39,7 @@ export default function Home() {
 
           <Link 
             href="/ai"
-            className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
+            className="p-6 border border-white/10 bg-black rounded-lg hover:bg-black/80 transition-all"
           >
             <h2 className="text-2xl font-semibold mb-2">AI Assistant</h2>
             <p className="text-gray-300">
@@ -44,7 +49,7 @@ export default function Home() {
 
           <Link 
             href="/docs"
-            className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
+            className="p-6 border border-white/10 bg-black rounded-lg hover:bg-black/80 transition-all"
           >
             <h2 className="text-2xl font-semibold mb-2">Documentation</h2>
             <p className="text-gray-300">
@@ -53,7 +58,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="mt-12 p-6 bg-blue-900 rounded-lg">
+        <div className="mt-12 p-6 bg-black border border-white/10 rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Tech Stack</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
@@ -89,7 +94,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

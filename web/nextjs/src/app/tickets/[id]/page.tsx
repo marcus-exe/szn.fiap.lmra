@@ -71,13 +71,13 @@ export default function TicketDetailPage() {
     ];
     return {
       name: priorities[priority] || 'Unknown',
-      color: colors[priority] || 'bg-gray bars commonClass common 9000 text-white'
+      color: colors[priority] || 'bg-gray-900 text-white'
     };
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen p-8 flex items-center justify-center">
+      <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-300">Loading ticket...</p>
@@ -88,7 +88,7 @@ export default function TicketDetailPage() {
 
   if (!ticket) {
     return (
-      <div className="min-h-screen p-8">
+      <div className="p-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-bold text-gray-100 mb-4">Ticket not found</h1>
           <Link href="/tickets" className="text-blue-600 hover:text-blue-800">
@@ -100,14 +100,14 @@ export default function TicketDetailPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
+    <div className="p-8">
       <div className="max-w-4xl mx-auto">
         <Link href="/tickets" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Tickets
         </Link>
         
-        <div className="bg-gray-800 rounded-lg shadow">
-          <div className="p-8 border-b border-gray-700">
+        <div className="bg-black border border-white/10 rounded-lg shadow">
+          <div className="p-8 border-b border-white/10">
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-100 mb-2">{ticket.title}</h1>
@@ -130,7 +130,7 @@ export default function TicketDetailPage() {
             <h2 className="text-xl font-semibold text-gray-100 mb-4">Description</h2>
             <p className="text-gray-300 mb-8 whitespace-pre-wrap">{ticket.description || 'No description provided'}</p>
 
-            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-700">
+            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/10">
               <div>
                 <h3 className="text-sm font-medium text-gray-400 mb-2">Created By</h3>
                 <p className="text-gray-100">User {ticket.createdByUserId}</p>

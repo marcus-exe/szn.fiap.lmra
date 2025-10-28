@@ -48,7 +48,7 @@ export default function CreateUserPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
+    <div className="p-8">
       <div className="max-w-2xl mx-auto">
         <Link href="/users" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Users
@@ -56,7 +56,7 @@ export default function CreateUserPage() {
         
         <h1 className="text-4xl font-bold text-gray-100 mb-8">Create New User</h1>
 
-        <div className="bg-gray-800 rounded-lg shadow p-8">
+        <div className="bg-black border border-white/10 rounded-lg shadow p-8">
           <form onSubmit={handleSubmit}>
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
@@ -75,7 +75,7 @@ export default function CreateUserPage() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   placeholder="user@example.com"
                 />
               </div>
@@ -91,7 +91,7 @@ export default function CreateUserPage() {
                   minLength={8}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   placeholder="Minimum 8 characters"
                 />
                 <p className="mt-1 text-sm text-gray-400">Password must be at least 8 characters long</p>
@@ -107,7 +107,7 @@ export default function CreateUserPage() {
                     id="firstName"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="John"
                   />
                 </div>
@@ -121,7 +121,7 @@ export default function CreateUserPage() {
                     id="lastName"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                     placeholder="Doe"
                   />
                 </div>
@@ -136,7 +136,7 @@ export default function CreateUserPage() {
                   required
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 >
                   <option value="USER">User</option>
                   <option value="ADMIN">Admin</option>
@@ -156,7 +156,7 @@ export default function CreateUserPage() {
               <button
                 type="button"
                 onClick={() => router.push('/users')}
-                className="px-6 py-2 bg-gray-200 text-gray-300 rounded-lg hover:bg-gray-300 transition-colors"
+                className="px-6 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Cancel
               </button>

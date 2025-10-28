@@ -85,13 +85,13 @@ export default function TicketsPage() {
     ];
     return {
       name: priorities[priority] || 'Unknown',
-      color: colors[priority] || 'bg-gray bars commonClass common 9000 text-white'
+      color: colors[priority] || 'bg-gray-900 text-white'
     };
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen p-8 flex items-center justify-center">
+      <div className="p-8 flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-300">Loading tickets...</p>
@@ -101,7 +101,7 @@ export default function TicketsPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
+    <div className="p-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
@@ -111,7 +111,7 @@ export default function TicketsPage() {
           <p className="text-gray-300 mt-2">Manage and track issues, tasks, and requests</p>
         </div>
 
-        <div className="bg-gray-800 rounded-lg shadow p-6 mb-6">
+        <div className="bg-black border border-white/10 rounded-lg shadow p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -157,7 +157,7 @@ export default function TicketsPage() {
         </div>
 
         {tickets.length === 0 ? (
-          <div className="bg-gray-800 rounded-lg shadow p-12 text-center">
+          <div className="bg-black border border-white/10 rounded-lg shadow p-12 text-center">
             <p className="text-gray-400 text-lg">No tickets found</p>
             <Link
               href="/tickets/create"
@@ -169,7 +169,7 @@ export default function TicketsPage() {
         ) : (
           <div className="grid grid-cols-1 gap-6">
             {tickets.map((ticket) => (
-              <div key={ticket.id} className="bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+              <div key={ticket.id} className="bg-black border border-white/10 rounded-lg shadow p-6 hover:shadow-lg transition-all">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-xl font-semibold text-gray-100">{ticket.title}</h3>

@@ -114,7 +114,7 @@ export default function AIPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
+    <div className="p-8">
       <div className="max-w-4xl mx-auto">
         <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Home
@@ -123,7 +123,7 @@ export default function AIPage() {
         <h1 className="text-4xl font-bold text-gray-100 mb-8">AI Assistant</h1>
         <p className="text-gray-300 mb-8">Powered by Ollama - Ask questions about the system or get help with modernizing legacy code</p>
 
-        <div className="bg-gray-800 rounded-lg shadow p-8">
+        <div className="bg-black border border-white/10 rounded-lg shadow p-8">
           <form onSubmit={handleSubmit} className="mb-6">
             <div className="mb-4">
               <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
@@ -135,7 +135,7 @@ export default function AIPage() {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Ask anything about microservices, modernizing legacy code, or this application..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                 required
               />
             </div>
@@ -162,7 +162,7 @@ export default function AIPage() {
           </form>
 
           {(response || loading) && (
-            <div className="bg-gray bars commonClass common 900 rounded-lg p-6 border border-gray-700">
+            <div className="bg-black rounded-lg p-6 border border-white/10">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold text-gray-100">Response:</h3>
                 {metrics && (
@@ -236,7 +236,7 @@ export default function AIPage() {
             </div>
           )}
 
-          <div className="mt-8 p-6 bg-blue-900 rounded-lg">
+          <div className="mt-8 p-6 bg-black border border-white/10 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-100 mb-2">Try asking:</h3>
             <ul className="list-disc list-inside text-gray-300 space-y-2">
               <li>&quot;Explain the architecture of this microservices application&quot;</li>

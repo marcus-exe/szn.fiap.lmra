@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function DocsPage() {
   return (
-    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
+    <div className="p-8">
       <div className="max-w-4xl mx-auto">
         <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Home
@@ -16,7 +16,7 @@ export default function DocsPage() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gray-800 rounded-lg shadow p-6 border border-gray-700 hover:shadow-lg transition-shadow">
+          <div className="bg-black rounded-lg shadow p-6 border border-white/10 hover:bg-black/80 transition-all">
             <h2 className="text-2xl font-semibold mb-3 text-gray-100">Migration Playbook</h2>
             <p className="text-gray-300 mb-4">
               Comprehensive guide for modernizing legacy applications to modern technologies
@@ -29,9 +29,9 @@ export default function DocsPage() {
             </ul>
           </div>
 
-          <div className="bg-gray-800 rounded-lg shadow p-6 border border-gray-700 hover:shadow-lg transition-shadow">
+          <div className="bg-black rounded-lg shadow p-6 border border-white/10 hover:bg-black/80 transition-all">
             <h2 className="text-2xl font-semibold mb-3 text-gray-100">Architecture Decisions</h2>
-            <p className="pherd-gray-600 mb-4">
+            <p className="text-gray-300 mb-4">
               Key design decisions and rationale for this reference application
             </p>
             <ul className="space-y-2 text-gray-300">
@@ -42,12 +42,12 @@ export default function DocsPage() {
           </div>
         </div>
 
-        <div className="mt-8 bg-gray-800 rounded-lg shadow p-8 border border-gray-700">
+        <div className="mt-8 bg-black rounded-lg shadow p-8 border border-white/10">
           <h2 className="text-2xl font-semibold mb-4 text-gray-100">Quick Start Guide</h2>
           
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">1. Prerequisites</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-100">1. Prerequisites</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-300">
                 <li>Docker and Docker Compose installed</li>
                 <li>Git for cloning the repository</li>
@@ -56,14 +56,14 @@ export default function DocsPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">2. Running the Application</h3>
-              <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+              <h3 className="text-xl font-semibold mb-2 text-gray-100">2. Running the Application</h3>
+              <div className="bg-black text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto border border-white/10">
                 docker-compose up -d
               </div>
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">3. Access Points</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-100">3. Access Points</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-300">
                 <li>Web UI: http://localhost:3000</li>
                 <li>Users API: http://localhost:8080</li>
@@ -73,7 +73,7 @@ export default function DocsPage() {
             </div>
 
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-gray-800">4. Architecture Overview</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-100">4. Architecture Overview</h3>
               <p className="text-gray-300">
                 The application follows a microservices architecture with three main backend services:
               </p>
@@ -87,7 +87,7 @@ export default function DocsPage() {
           </div>
         </div>
 
-        <div className="mt-8 bg-blue-900 rounded-lg p-6">
+        <div className="mt-8 bg-black border border-white/10 rounded-lg p-6">
           <h3 className="text-xl font-semibold text-gray-100 mb-2">Learn More</h3>
           <p className="text-gray-300">
             For detailed migration guides and architecture decisions, refer to the documentation files in the /docs directory of the repository.
