@@ -1,5 +1,7 @@
 # Legacy Modernization Reference Application (LMRA)
 
+🌐 **Language**: [English](README.md) | [Português](README_PT.md)
+
 A comprehensive reference application demonstrating how to modernize legacy codebases using modern technologies, cloud-native architectures, and best practices.
 
 ## 🎯 Project Goals
@@ -65,6 +67,7 @@ challenge_2025/
    - Responsibilities: Primary user interface
    - Authentication: AWS Cognito
    - Port: 3000
+   - UI Features: Modern dark theme with black background, animated DNA helix visualization, rolling slider with Chinese phrase, Arimo font family
 
 2. **Android Application**
    - Technology: Kotlin 2.x, Jetpack Compose
@@ -123,7 +126,7 @@ See `docs/migration-playbook.md` for detailed guides.
 - **Node.js**: Node 20+, Express, TypeScript
 
 ### Frontend
-- **Web**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Web**: Next.js 14, React 18, TypeScript, Tailwind CSS, Arimo font
 - **Mobile**: Kotlin 2.x, Jetpack Compose, Ktor, Room
 
 ### Database
@@ -141,6 +144,18 @@ See `docs/migration-playbook.md` for detailed guides.
 - **Self-hosted**: Ollama
 - **Models**: Llama 3, Qwen2
 - **Use cases**: Ticket summaries, code modernization suggestions
+
+## 🎨 UI/UX Features
+
+The web application features a modern, minimalist design:
+
+- **Dark Theme**: Full black background with a subtle white grid pattern for depth
+- **Animated DNA Visualization**: Interactive 3D canvas-based DNA helix animation with continuous rotation
+- **Rolling Slider**: Infinite-scrolling banner with the Chinese phrase "现代化旧代码库的完整参考指南" (A comprehensive reference guide for modernizing legacy codebases)
+- **Typography**: Arimo font family for a clean, modern look across all pages
+- **Card-Based Layout**: Black cards with white borders and hover effects
+- **Global Components**: Consistent footer ("All rights reserved to SNK") and rolling slider on all pages
+- **Responsive Design**: Optimized for all screen sizes with Tailwind CSS
 
 ## 📚 Documentation
 
@@ -166,4 +181,9 @@ After working through this project, you'll understand:
 - Modern frontend and mobile development
 - Infrastructure as Code and CI/CD best practices
 - Integration of AI capabilities into applications
+
+## 🌐 Language
+
+- [English](README.md)
+- [Português](README_PT.md)
 
