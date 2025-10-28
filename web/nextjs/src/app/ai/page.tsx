@@ -114,19 +114,19 @@ export default function AIPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
       <div className="max-w-4xl mx-auto">
         <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Home
         </Link>
         
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">AI Assistant</h1>
-        <p className="text-gray-600 mb-8">Powered by Ollama - Ask questions about the system or get help with modernizing legacy code</p>
+        <h1 className="text-4xl font-bold text-gray-100 mb-8">AI Assistant</h1>
+        <p className="text-gray-300 mb-8">Powered by Ollama - Ask questions about the system or get help with modernizing legacy code</p>
 
-        <div className="bg-white rounded-lg shadow p-8">
+        <div className="bg-gray-800 rounded-lg shadow p-8">
           <form onSubmit={handleSubmit} className="mb-6">
             <div className="mb-4">
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
                 Your Message
               </label>
               <textarea
@@ -148,7 +148,7 @@ export default function AIPage() {
                   onChange={(e) => setStreaming(e.target.checked)}
                   className="mr-2"
                 />
-                <span className="text-sm text-gray-700">Real-time streaming mode</span>
+                <span className="text-sm text-gray-300">Real-time streaming mode</span>
               </label>
             </div>
             
@@ -162,11 +162,11 @@ export default function AIPage() {
           </form>
 
           {(response || loading) && (
-            <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
+            <div className="bg-gray bars commonClass common 900 rounded-lg p-6 border border-gray-700">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Response:</h3>
+                <h3 className="text-lg font-semibold text-gray-100">Response:</h3>
                 {metrics && (
-                  <div className="flex gap-4 text-sm text-gray-600">
+                  <div className="flex gap-4 text-sm text-gray-300">
                     <span className="flex items-center gap-1">
                       <span className="font-semibold">{metrics.tokens}</span> tokens
                     </span>
@@ -193,7 +193,7 @@ export default function AIPage() {
               </div>
               
               {loading && !response && (
-                <div className="text-gray-500 italic">Waiting for response...</div>
+                <div className="text-gray-400 italic">Waiting for response...</div>
               )}
               
               {response && (
@@ -213,7 +213,7 @@ export default function AIPage() {
                 <div className="mt-4 flex justify-end">
                   <button
                     onClick={handleCopy}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors text-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-300 rounded-lg transition-colors text-sm"
                   >
                     {copied ? (
                       <>
@@ -236,9 +236,9 @@ export default function AIPage() {
             </div>
           )}
 
-          <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Try asking:</h3>
-            <ul className="list-disc list-inside text-gray-700 space-y-2">
+          <div className="mt-8 p-6 bg-blue-900 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-100 mb-2">Try asking:</h3>
+            <ul className="list-disc list-inside text-gray-300 space-y-2">
               <li>&quot;Explain the architecture of this microservices application&quot;</li>
               <li>&quot;How do I modernize a legacy Java application?&quot;</li>
               <li>&quot;What are the differences between .NET Framework and .NET 8?&quot;</li>

@@ -2,12 +2,12 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-8 bg-gray-50">
+    <main className="min-h-screen p-8 bg-gray-900">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-4">
           Legacy Modernization Reference Application
         </h1>
-        <p className="text-xl text-gray-600 mb-8">
+        <p className="text-xl text-gray-300 mb-8">
           A comprehensive reference for modernizing legacy codebases
         </p>
 
@@ -17,7 +17,7 @@ export default function Home() {
             className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
           >
             <h2 className="text-2xl font-semibold mb-2">Tickets</h2>
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               Manage and track issues, tasks, and requests
             </p>
           </Link>
@@ -27,7 +27,7 @@ export default function Home() {
             className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
           >
             <h2 className="text-2xl font-semibold mb-2">Users</h2>
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               User management and authentication
             </p>
           </Link>
@@ -37,7 +37,7 @@ export default function Home() {
             className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
           >
             <h2 className="text-2xl font-semibold mb-2">AI Assistant</h2>
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               AI-powered features powered by Ollama
             </p>
           </Link>
@@ -47,13 +47,13 @@ export default function Home() {
             className="p-6 border rounded-lg hover:shadow-lg transition-shadow"
           >
             <h2 className="text-2xl font-semibold mb-2">Documentation</h2>
-            <p className="text-gray-600">
+            <p className="text-gray-300">
               Learn about the architecture and migration patterns
             </p>
           </Link>
         </div>
 
-        <div className="mt-12 p-6 bg-blue-50 rounded-lg">
+        <div className="mt-12 p-6 bg-blue-900 rounded-lg">
           <h3 className="text-xl font-semibold mb-2">Tech Stack</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>

@@ -48,15 +48,15 @@ export default function CreateUserPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
       <div className="max-w-2xl mx-auto">
         <Link href="/users" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Users
         </Link>
         
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Create New User</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-8">Create New User</h1>
 
-        <div className="bg-white rounded-lg shadow p-8">
+        <div className="bg-gray-800 rounded-lg shadow p-8">
           <form onSubmit={handleSubmit}>
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
@@ -66,7 +66,7 @@ export default function CreateUserPage() {
 
             <div className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                   Email *
                 </label>
                 <input
@@ -81,7 +81,7 @@ export default function CreateUserPage() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                   Password *
                 </label>
                 <input
@@ -94,12 +94,12 @@ export default function CreateUserPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="Minimum 8 characters"
                 />
-                <p className="mt-1 text-sm text-gray-500">Password must be at least 8 characters long</p>
+                <p className="mt-1 text-sm text-gray-400">Password must be at least 8 characters long</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-300 mb-2">
                     First Name
                   </label>
                   <input
@@ -113,7 +113,7 @@ export default function CreateUserPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-300 mb-2">
                     Last Name
                   </label>
                   <input
@@ -128,7 +128,7 @@ export default function CreateUserPage() {
               </div>
 
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="role" className="block text-sm font-medium text-gray-300 mb-2">
                   Role *
                 </label>
                 <select
@@ -156,7 +156,7 @@ export default function CreateUserPage() {
               <button
                 type="button"
                 onClick={() => router.push('/users')}
-                className="px-6 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                className="px-6 py-2 bg-gray-200 text-gray-300 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Cancel
               </button>

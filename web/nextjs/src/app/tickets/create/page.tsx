@@ -55,17 +55,17 @@ export default function CreateTicketPage() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray-900">
       <div className="max-w-2xl mx-auto">
         <Link href="/tickets" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Tickets
         </Link>
         
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Create New Ticket</h1>
+        <h1 className="text-4xl font-bold text-gray-100 mb-8">Create New Ticket</h1>
         
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-8">
+        <form onSubmit={handleSubmit} className="bg-gray-800 rounded-lg shadow p-8">
           <div className="mb-6">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-300 mb-2">
               Title *
             </label>
             <input
@@ -80,7 +80,7 @@ export default function CreateTicketPage() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
               Description
             </label>
             <textarea
@@ -94,14 +94,14 @@ export default function CreateTicketPage() {
           </div>
 
           <div className="mb-6">
-            <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="priority" className="block text-sm font-medium text-gray-300 mb-2">
               Priority
             </label>
             <select
               id="priority"
               value={formData.priority}
               onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
             >
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
@@ -120,7 +120,7 @@ export default function CreateTicketPage() {
             </button>
             <Link
               href="/tickets"
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
             >
               Cancel
             </Link>

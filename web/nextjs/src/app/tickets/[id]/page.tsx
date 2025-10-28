@@ -49,15 +49,15 @@ export default function TicketDetailPage() {
   const getStatusInfo = (status: number) => {
     const statuses = ['Open', 'InProgress', 'Resolved', 'Closed', 'Cancelled'];
     const colors = [
-      'bg-green-100 text-green-800',
-      'bg-blue-100 text-blue-800',
-      'bg-gray-100 text-gray-800',
-      'bg-purple-100 text-purple-800',
-      'bg-red-100 text-red-800'
+      'bg-green-600 text-white',
+      'bg-blue-600 text-white',
+      'bg-gray-600 text-white',
+      'bg-purple-600 text-white',
+      'bg-red-600 text-white'
     ];
     return {
       name: statuses[status] || 'Unknown',
-      color: colors[status] || 'bg-gray-100 text-gray-800'
+      color: colors[status] || 'bg-gray-600 text-white'
     };
   };
 
@@ -71,7 +71,7 @@ export default function TicketDetailPage() {
     ];
     return {
       name: priorities[priority] || 'Unknown',
-      color: colors[priority] || 'bg-gray-500 text-white'
+      color: colors[priority] || 'bg-gray bars commonClass common 9000 text-white'
     };
   };
 
@@ -80,7 +80,7 @@ export default function TicketDetailPage() {
       <div className="min-h-screen p-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading ticket...</p>
+          <p className="mt-4 text-gray-300">Loading ticket...</p>
         </div>
       </div>
     );
@@ -90,7 +90,7 @@ export default function TicketDetailPage() {
     return (
       <div className="min-h-screen p-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Ticket not found</h1>
+          <h1 className="text-2xl font-bold text-gray-100 mb-4">Ticket not found</h1>
           <Link href="/tickets" className="text-blue-600 hover:text-blue-800">
             ← Back to Tickets
           </Link>
@@ -100,18 +100,18 @@ export default function TicketDetailPage() {
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
       <div className="max-w-4xl mx-auto">
         <Link href="/tickets" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
           ← Back to Tickets
         </Link>
         
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-8 border-b border-gray-200">
+        <div className="bg-gray-800 rounded-lg shadow">
+          <div className="p-8 border-b border-gray-700">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{ticket.title}</h1>
-                <p className="text-gray-600 text-sm">
+                <h1 className="text-3xl font-bold text-gray-100 mb-2">{ticket.title}</h1>
+                <p className="text-gray-300 text-sm">
                   Ticket #{ticket.id} • Created {new Date(ticket.createdAt).toLocaleDateString()}
                 </p>
               </div>
@@ -127,25 +127,25 @@ export default function TicketDetailPage() {
           </div>
 
           <div className="p-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Description</h2>
-            <p className="text-gray-700 mb-8 whitespace-pre-wrap">{ticket.description || 'No description provided'}</p>
+            <h2 className="text-xl font-semibold text-gray-100 mb-4">Description</h2>
+            <p className="text-gray-300 mb-8 whitespace-pre-wrap">{ticket.description || 'No description provided'}</p>
 
-            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-200">
+            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-gray-700">
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Created By</h3>
-                <p className="text-gray-900">User {ticket.createdByUserId}</p>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Created By</h3>
+                <p className="text-gray-100">User {ticket.createdByUserId}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Assigned To</h3>
-                <p className="text-gray-900">{ticket.assignedToUserId ? `User ${ticket.assignedToUserId}` : 'Unassigned'}</p>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Assigned To</h3>
+                <p className="text-gray-100">{ticket.assignedToUserId ? `User ${ticket.assignedToUserId}` : 'Unassigned'}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Created At</h3>
-                <p className="text-gray-900">{new Date(ticket.createdAt).toLocaleString()}</p>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Created At</h3>
+                <p className="text-gray-100">{new Date(ticket.createdAt).toLocaleString()}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-gray-500 mb-2">Last Updated</h3>
-                <p className="text-gray-900">{new Date(ticket.updatedAt).toLocaleString()}</p>
+                <h3 className="text-sm font-medium text-gray-400 mb-2">Last Updated</h3>
+                <p className="text-gray-100">{new Date(ticket.updatedAt).toLocaleString()}</p>
               </div>
             </div>
           </div>

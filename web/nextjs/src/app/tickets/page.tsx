@@ -63,15 +63,15 @@ export default function TicketsPage() {
   const getStatusInfo = (status: number) => {
     const statuses = ['Open', 'InProgress', 'Resolved', 'Closed', 'Cancelled'];
     const colors = [
-      'bg-green-100 text-green-800',
-      'bg-blue-100 text-blue-800',
-      'bg-gray-100 text-gray-800',
-      'bg-purple-100 text-purple-800',
-      'bg-red-100 text-red-800'
+      'bg-green-600 text-white',
+      'bg-blue-600 text-white',
+      'bg-gray-600 text-white',
+      'bg-purple-600 text-white',
+      'bg-red-600 text-white'
     ];
     return {
       name: statuses[status] || 'Unknown',
-      color: colors[status] || 'bg-gray-100 text-gray-800'
+      color: colors[status] || 'bg-gray-600 text-white'
     };
   };
 
@@ -85,7 +85,7 @@ export default function TicketsPage() {
     ];
     return {
       name: priorities[priority] || 'Unknown',
-      color: colors[priority] || 'bg-gray-500 text-white'
+      color: colors[priority] || 'bg-gray bars commonClass common 9000 text-white'
     };
   };
 
@@ -94,27 +94,27 @@ export default function TicketsPage() {
       <div className="min-h-screen p-8 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading tickets...</p>
+          <p className="mt-4 text-gray-300">Loading tickets...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
+    <div className="min-h-screen p-8 bg-gray bars commonClass common 900">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
             ← Back to Home
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900">Tickets</h1>
-          <p className="text-gray-600 mt-2">Manage and track issues, tasks, and requests</p>
+          <h1 className="text-4xl font-bold text-gray-100">Tickets</h1>
+          <p className="text-gray-300 mt-2">Manage and track issues, tasks, and requests</p>
         </div>
 
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
+        <div className="bg-gray-800 rounded-lg shadow p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Search
               </label>
               <input
@@ -129,13 +129,13 @@ export default function TicketsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 Filter by Status
               </label>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
               >
                 <option value="">All Statuses</option>
                 <option value="Open">Open</option>
@@ -157,8 +157,8 @@ export default function TicketsPage() {
         </div>
 
         {tickets.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
-            <p className="text-gray-500 text-lg">No tickets found</p>
+          <div className="bg-gray-800 rounded-lg shadow p-12 text-center">
+            <p className="text-gray-400 text-lg">No tickets found</p>
             <Link
               href="/tickets/create"
               className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -169,11 +169,11 @@ export default function TicketsPage() {
         ) : (
           <div className="grid grid-cols-1 gap-6">
             {tickets.map((ticket) => (
-              <div key={ticket.id} className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
+              <div key={ticket.id} className="bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900">{ticket.title}</h3>
-                    <p className="text-gray-600 text-sm mt-1">
+                    <h3 className="text-xl font-semibold text-gray-100">{ticket.title}</h3>
+                    <p className="text-gray-300 text-sm mt-1">
                       Ticket #{ticket.id} • Created {new Date(ticket.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -186,9 +186,9 @@ export default function TicketsPage() {
                     </span>
                   </div>
                 </div>
-                <p className="text-gray-700 mb-4 line-clamp-3">{ticket.description || 'No description provided'}</p>
+                <p className="text-gray-300 mb-4 line-clamp-3">{ticket.description || 'No description provided'}</p>
                 <div className="flex justify-between items-center">
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-400">
                     Created by User {ticket.createdByUserId}
                     {ticket.assignedToUserId && <span> • Assigned to User {ticket.assignedToUserId}</span>}
                   </div>
