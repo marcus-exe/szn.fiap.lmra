@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lmra-postgres
+    environment:
+      POSTGRES_DB: lmra
+      POSTGRES_USER: lmra_user
+      POSTGRES_PASSWORD: lmra_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lmra_user -d lmra"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - lmra-network
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: lmra-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    networks:
+      - lmra-network
+
+  users-service:
+    build:
+      context: ./services/users-java
+      dockerfile: Dockerfile
+    container_name: lmra-users-java
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lmra
+      SPRING_DATASOURCE_USERNAME: lmra_user
+      SPRING_DATASOURCE_PASSWORD: lmra_password
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - lmra-network
+
+  tickets-service:
+    build:
+      context: ./services/tickets-dotnet
+      dockerfile: Dockerfile
+    container_name: lmra-tickets-dotnet
+    ports:
+      - "8081:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=lmra;Username=lmra_user;Password=lmra_password
+      ASPNETCORE_URLS: http://+:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - lmra-network
+
+  ai-gateway:
+    build:
+      context: ./services/ai-gateway-node
+      dockerfile: Dockerfile
+    container_name: lmra-ai-gateway
+    ports:
+      - "8082:8080"
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+      PORT: 8080
+    depends_on:
+      - ollama
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - lmra-network
+
+  web:
+    build:
+      context: ./web/nextjs
+      dockerfile: Dockerfile
+    container_name: lmra-web
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_USERS: http://localhost:8080
+      NEXT_PUBLIC_API_TICKETS: http://localhost:8081
+      NEXT_PUBLIC_API_AI: http://localhost:8082
+    depends_on:
+      - users-service
+      - tickets-service
+      - ai-gateway
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - lmra-network
+
+volumes:
+  postgres_data:
+  ollama_data:
+
+networks:
+  lmra-network:
+    driver: bridge
+
