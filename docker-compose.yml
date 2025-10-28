@@ -107,6 +107,8 @@ services:
       NEXT_PUBLIC_API_USERS: http://localhost:8080
       NEXT_PUBLIC_API_TICKETS: http://localhost:8081
       NEXT_PUBLIC_API_AI: http://localhost:8082
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - users-service
       - tickets-service

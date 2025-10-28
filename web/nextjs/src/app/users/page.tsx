@@ -74,12 +74,20 @@ export default function UsersPage() {
   return (
     <div className="min-h-screen p-8 bg-gray-50">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
-            ← Back to Home
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <Link href="/" className="text-blue-600 hover:text-blue-800 mb-4 inline-block">
+              ← Back to Home
+            </Link>
+            <h1 className="text-4xl font-bold text-gray-900">Users</h1>
+            <p className="text-gray-600 mt-2">User management and authentication</p>
+          </div>
+          <Link
+            href="/users/create"
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            + Create User
           </Link>
-          <h1 className="text-4xl font-bold text-gray-900">Users</h1>
-          <p className="text-gray-600 mt-2">User management and authentication</p>
         </div>
 
         <div className="bg-white rounded-lg shadow p-6 mb-6">
