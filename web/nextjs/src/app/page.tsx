@@ -16,7 +16,7 @@ export default function Home() {
 
         <DNAAnimation />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link 
             href="/tickets"
             className="p-6 border border-white/10 bg-black rounded-lg hover:bg-black/80 transition-all"
@@ -44,6 +44,16 @@ export default function Home() {
             <h2 className="text-2xl font-semibold mb-2">AI Assistant</h2>
             <p className="text-gray-300">
               AI-powered features powered by Ollama
+            </p>
+          </Link>
+
+          <Link 
+            href="/modernize"
+            className="p-6 border border-white/10 bg-black rounded-lg hover:bg-black/80 transition-all"
+          >
+            <h2 className="text-2xl font-semibold mb-2">Code Modernization</h2>
+            <p className="text-gray-300">
+              Analyze dependencies and modernize legacy code
             </p>
           </Link>
 
