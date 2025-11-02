@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import axios from 'axios';
+import { saveAnalysisStart, updateAnalysisProgress, getAnalysisHistory, getAnalysisById } from '../db/analysisHistory';
 
 const router = Router();
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
@@ -49,16 +50,31 @@ interface CodebaseAnalysisRequest {
   fileExtensions?: string[];
   excludePaths?: string[];
   maxFiles?: number;
+  stream?: boolean;
 }
 
 // OPTION 1: Enhanced Modernize Code endpoint - Returns structured JSON with actual modernized code
 router.post('/modernize', async (req, res) => {
+  let analysisId: number | null = null;
+  
   try {
     const { code, language, targetVersion }: ModernizeCodeRequest = req.body;
 
     if (!code || !language) {
       return res.status(400).json({ error: 'Code and language are required' });
     }
+
+    // Save query to database
+    analysisId = await saveAnalysisStart({
+      analysis_type: 'modernize',
+      language,
+      query_parameters: {
+        language,
+        targetVersion,
+        codeLength: code.length,
+        codeLines: code.split('\n').length
+      }
+    });
 
     const prompt = `You are an expert code modernization assistant specializing in ${language}. 
 Analyze the following legacy code and provide a comprehensive modernization plan.
@@ -115,29 +131,68 @@ Be thorough and provide production-ready modernized code.`;
       const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       parsedResponse = JSON.parse(jsonStr);
-      res.json({
+      
+      const resultData = {
         success: true,
         ...parsedResponse,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        targetVersion
+      };
+
+      // Save result to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: resultData
+      });
+
+      res.json({
+        analysisId,
+        ...resultData
       });
     } catch (parseError) {
       // Fallback to text response
-      res.json({
+      const fallbackResult = {
         success: false,
         recommendations: response.data.message.content,
         model: response.data.model,
+        language,
+        targetVersion,
         note: "Response was not in JSON format"
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: fallbackResult,
+        error_message: 'Failed to parse JSON response'
+      });
+
+      res.json({
+        analysisId,
+        ...fallbackResult
       });
     }
   } catch (error) {
     console.error('Error analyzing code:', error);
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
     if (axios.isAxiosError(error)) {
       return res.status(500).json({ 
         error: 'Failed to analyze code',
-        details: error.message 
+        details: error.message,
+        analysisId 
       });
     }
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ 
+      error: 'Internal server error',
+      analysisId 
+    });
   }
 });
 
@@ -187,12 +242,27 @@ Provide a comparison highlighting:
 
 // OPTION 2: Automated Code Refactoring - Directly generates modernized code
 router.post('/refactor', async (req, res) => {
+  let analysisId: number | null = null;
+  
   try {
     const { code, language, refactorType = 'full', generateTests = false }: RefactorCodeRequest = req.body;
 
     if (!code || !language) {
       return res.status(400).json({ error: 'Code and language are required' });
     }
+
+    // Save query to database
+    analysisId = await saveAnalysisStart({
+      analysis_type: 'refactor',
+      language,
+      query_parameters: {
+        language,
+        refactorType,
+        generateTests,
+        codeLength: code.length,
+        codeLines: code.split('\n').length
+      }
+    });
 
     const refactorFocus = {
       'full': 'complete modernization including patterns, structure, and best practices',
@@ -242,32 +312,84 @@ Provide the refactored code in this JSON format:
       const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       const parsedResponse = JSON.parse(jsonStr);
-      res.json({
+      
+      const resultData = {
         success: true,
         ...parsedResponse,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        refactorType
+      };
+
+      // Save result to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: resultData
+      });
+
+      res.json({
+        analysisId,
+        ...resultData
       });
     } catch (parseError) {
-      res.json({
+      const fallbackResult = {
         success: false,
         refactoredCode: response.data.message.content,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        refactorType
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: fallbackResult,
+        error_message: 'Failed to parse JSON response'
+      });
+
+      res.json({
+        analysisId,
+        ...fallbackResult
       });
     }
   } catch (error) {
     console.error('Error refactoring code:', error);
-    res.status(500).json({ error: 'Failed to refactor code' });
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    res.status(500).json({ 
+      error: 'Failed to refactor code',
+      analysisId 
+    });
   }
 });
 
 // OPTION 3: Legacy Code Analysis - Identifies issues and provides actionable insights
 router.post('/analyze-legacy', async (req, res) => {
+  let analysisId: number | null = null;
+  
   try {
     const { code, language, focusAreas = [] }: AnalyzeLegacyRequest = req.body;
 
     if (!code || !language) {
       return res.status(400).json({ error: 'Code and language are required' });
     }
+
+    // Save query to database
+    analysisId = await saveAnalysisStart({
+      analysis_type: 'analyze-legacy',
+      language,
+      query_parameters: {
+        language,
+        focusAreas,
+        codeLength: code.length,
+        codeLines: code.split('\n').length
+      }
+    });
 
     const focusText = focusAreas.length > 0 
       ? `Focus your analysis on: ${focusAreas.join(', ')}.`
@@ -331,26 +453,68 @@ Provide analysis in JSON format:
       const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       const parsedResponse = JSON.parse(jsonStr);
-      res.json({
+      
+      const resultData = {
         success: true,
         ...parsedResponse,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        focusAreas
+      };
+
+      // Save result to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: resultData,
+        modernization_score: parsedResponse.modernizationScore,
+        overall_severity: parsedResponse.severity
+      });
+
+      res.json({
+        analysisId,
+        ...resultData
       });
     } catch (parseError) {
-      res.json({
+      const fallbackResult = {
         success: false,
         analysis: response.data.message.content,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        focusAreas
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: fallbackResult,
+        error_message: 'Failed to parse JSON response'
+      });
+
+      res.json({
+        analysisId,
+        ...fallbackResult
       });
     }
   } catch (error) {
     console.error('Error analyzing legacy code:', error);
-    res.status(500).json({ error: 'Failed to analyze legacy code' });
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    res.status(500).json({ 
+      error: 'Failed to analyze legacy code',
+      analysisId 
+    });
   }
 });
 
 // OPTION 4: Migration Plan Generator - Creates step-by-step migration plans
 router.post('/migration-plan', async (req, res) => {
+  let analysisId: number | null = null;
+  
   try {
     const { code, sourceVersion, targetVersion, language }: MigrationPlanRequest = req.body;
 
@@ -359,6 +523,19 @@ router.post('/migration-plan', async (req, res) => {
         error: 'Code, sourceVersion, targetVersion, and language are required' 
       });
     }
+
+    // Save query to database
+    analysisId = await saveAnalysisStart({
+      analysis_type: 'migration-plan',
+      language,
+      query_parameters: {
+        language,
+        sourceVersion,
+        targetVersion,
+        codeLength: code.length,
+        codeLines: code.split('\n').length
+      }
+    });
 
     const prompt = `Create a detailed migration plan for upgrading this ${language} code from ${sourceVersion} to ${targetVersion}.
 
@@ -420,26 +597,68 @@ Provide a comprehensive migration plan in JSON format:
       const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       const parsedResponse = JSON.parse(jsonStr);
-      res.json({
+      
+      const resultData = {
         success: true,
         ...parsedResponse,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        sourceVersion,
+        targetVersion
+      };
+
+      // Save result to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: resultData
+      });
+
+      res.json({
+        analysisId,
+        ...resultData
       });
     } catch (parseError) {
-      res.json({
+      const fallbackResult = {
         success: false,
         plan: response.data.message.content,
-        model: response.data.model
+        model: response.data.model,
+        language,
+        sourceVersion,
+        targetVersion
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: fallbackResult,
+        error_message: 'Failed to parse JSON response'
+      });
+
+      res.json({
+        analysisId,
+        ...fallbackResult
       });
     }
   } catch (error) {
     console.error('Error generating migration plan:', error);
-    res.status(500).json({ error: 'Failed to generate migration plan' });
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    res.status(500).json({ 
+      error: 'Failed to generate migration plan',
+      analysisId 
+    });
   }
 });
 
 // OPTION 5: Dependency Analysis & Upgrade Recommendations
 router.post('/analyze-dependencies', async (req, res) => {
+  let analysisId: number | null = null;
+  
   try {
     const { dependencies, language }: DependencyAnalysisRequest = req.body;
 
@@ -448,6 +667,17 @@ router.post('/analyze-dependencies', async (req, res) => {
         error: 'Dependencies and language are required' 
       });
     }
+
+    // Save query to database
+    analysisId = await saveAnalysisStart({
+      analysis_type: 'dependencies',
+      language,
+      query_parameters: {
+        dependencies,
+        language,
+        source: 'manual'
+      }
+    });
 
     const depsList = Object.entries(dependencies)
       .map(([name, version]) => `  "${name}": "${version}"`)
@@ -511,21 +741,59 @@ Provide analysis in JSON format:
       const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       const parsedResponse = JSON.parse(jsonStr);
-      res.json({
+      
+      const resultData = {
         success: true,
         ...parsedResponse,
-        model: response.data.model
+        model: response.data.model,
+        language
+      };
+
+      // Save result to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: resultData,
+        modernization_score: parsedResponse.analysis?.totalDependencies ? 
+          Math.max(0, 100 - (parsedResponse.analysis.outdatedCount / parsedResponse.analysis.totalDependencies * 100)) : undefined
+      });
+
+      res.json({
+        analysisId,
+        ...resultData
       });
     } catch (parseError) {
-      res.json({
+      const fallbackResult = {
         success: false,
         analysis: response.data.message.content,
-        model: response.data.model
+        model: response.data.model,
+        language
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: fallbackResult,
+        error_message: 'Failed to parse JSON response'
+      });
+
+      res.json({
+        analysisId,
+        ...fallbackResult
       });
     }
   } catch (error) {
     console.error('Error analyzing dependencies:', error);
-    res.status(500).json({ error: 'Failed to analyze dependencies' });
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+    res.status(500).json({ 
+      error: 'Failed to analyze dependencies',
+      analysisId 
+    });
   }
 });
 
@@ -790,29 +1058,53 @@ function detectLanguageFromPath(path: string): string {
   return langMap[ext] || 'unknown';
 }
 
-// OPTION 6: Full Codebase Analysis - Analyzes entire repository for deprecated patterns and vulnerabilities
-router.post('/analyze-codebase', async (req, res) => {
-  try {
-    const { repoUrl, branch, language, fileExtensions, excludePaths, maxFiles = 50 }: CodebaseAnalysisRequest = req.body;
+// Helper function to send SSE progress update
+function sendProgress(res: any, event: string, data: any) {
+  res.write(`event: ${event}\n`);
+  res.write(`data: ${JSON.stringify(data)}\n\n`);
+}
 
+// OPTION 6: Full Codebase Analysis - Analyzes entire repository with real-time progress
+router.post('/analyze-codebase', async (req, res) => {
+  const { repoUrl, branch, language, fileExtensions, excludePaths, maxFiles = 50, stream = false }: CodebaseAnalysisRequest & { stream?: boolean } = req.body;
+
+  // Setup SSE if streaming is requested
+  if (stream || req.headers.accept?.includes('text/event-stream')) {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no'); // Disable buffering for nginx
+  }
+
+  let analysisId: number | null = null;
+
+  try {
     if (!repoUrl) {
-      return res.status(400).json({ 
-        error: 'GitHub repository URL is required' 
-      });
+      if (stream) {
+        sendProgress(res, 'error', { error: 'GitHub repository URL is required' });
+        res.end();
+      } else {
+        return res.status(400).json({ error: 'GitHub repository URL is required' });
+      }
+      return;
     }
 
     // Parse GitHub URL
     const parsed = parseGitHubUrl(repoUrl);
     if (!parsed) {
-      return res.status(400).json({ 
-        error: 'Invalid GitHub URL format' 
-      });
+      if (stream) {
+        sendProgress(res, 'error', { error: 'Invalid GitHub URL format' });
+        res.end();
+      } else {
+        return res.status(400).json({ error: 'Invalid GitHub URL format' });
+      }
+      return;
     }
 
     const { owner, repo } = parsed;
     const targetBranch = branch || parsed.branch;
 
-    // Determine file extensions based on language if not provided
+    // Determine file extensions
     let extensions = fileExtensions;
     if (!extensions && language) {
       const extMap: Record<string, string[]> = {
@@ -834,22 +1126,85 @@ router.post('/analyze-codebase', async (req, res) => {
     const defaultExcludePaths = ['node_modules', '.git', 'target', 'build', 'dist', '.next', 'vendor', 'bin', 'obj'];
     const finalExcludePaths = excludePaths ? [...defaultExcludePaths, ...excludePaths] : defaultExcludePaths;
 
-    // Fetch repository files
-    const files = await fetchRepositoryFiles(owner, repo, targetBranch, '', extensions, finalExcludePaths, maxFiles);
+    // Save analysis start to database
+    analysisId = await saveAnalysisStart({
+      repository_url: repoUrl,
+      branch: targetBranch,
+      analysis_type: 'codebase',
+      language: language || undefined,
+      query_parameters: {
+        repoUrl,
+        branch: targetBranch,
+        language,
+        fileExtensions: extensions,
+        excludePaths: finalExcludePaths,
+        maxFiles
+      }
+    });
 
-    if (files.length === 0) {
-      return res.status(404).json({ 
-        error: 'No code files found matching the criteria' 
+    if (stream) {
+      sendProgress(res, 'started', { 
+        analysisId,
+        message: 'Analysis started',
+        repository: repoUrl,
+        branch: targetBranch
       });
     }
 
-    // Fetch and aggregate code from files (sample approach - fetch first N files)
+    // Step 1: Fetch repository files
+    if (stream) {
+      sendProgress(res, 'progress', { 
+        step: 'discovering',
+        message: 'Discovering repository files...',
+        progress: 10
+      });
+    }
+
+    const files = await fetchRepositoryFiles(owner, repo, targetBranch, '', extensions, finalExcludePaths, maxFiles);
+
+    if (files.length === 0) {
+      await updateAnalysisProgress(analysisId, { 
+        status: 'failed', 
+        error_message: 'No code files found matching the criteria' 
+      });
+      if (stream) {
+        sendProgress(res, 'error', { error: 'No code files found matching the criteria' });
+        res.end();
+      } else {
+        return res.status(404).json({ error: 'No code files found matching the criteria' });
+      }
+      return;
+    }
+
+    if (stream) {
+      sendProgress(res, 'progress', { 
+        step: 'files_found',
+        message: `Found ${files.length} files to analyze`,
+        progress: 20,
+        filesCount: files.length
+      });
+    }
+
+    // Step 2: Fetch file contents with progress updates
     const codeSamples: Array<{path: string; language: string; content: string; lines: number}> = [];
     const processedFiles: string[] = [];
+    const filesToProcess = files.slice(0, Math.min(maxFiles, 30));
 
-    for (const file of files.slice(0, Math.min(maxFiles, 30))) { // Limit to 30 files for analysis
+    for (let i = 0; i < filesToProcess.length; i++) {
+      const file = filesToProcess[i];
+      
+      if (stream) {
+        sendProgress(res, 'progress', {
+          step: 'fetching',
+          message: `Fetching ${file.path}... (${i + 1}/${filesToProcess.length})`,
+          progress: 20 + Math.floor((i / filesToProcess.length) * 40),
+          currentFile: file.path,
+          filesProcessed: i,
+          totalFiles: filesToProcess.length
+        });
+      }
+
       try {
-        // Get raw file content using the blob SHA
         const content = await fetchFileContent(owner, repo, file.sha);
         if (content) {
           const detectedLang = detectLanguageFromPath(file.path);
@@ -857,7 +1212,7 @@ router.post('/analyze-codebase', async (req, res) => {
             codeSamples.push({
               path: file.path,
               language: detectedLang || language || 'unknown',
-              content: content.substring(0, 5000), // Limit content per file to 5KB for analysis
+              content: content.substring(0, 5000),
               lines: content.split('\n').length
             });
             processedFiles.push(file.path);
@@ -866,11 +1221,37 @@ router.post('/analyze-codebase', async (req, res) => {
       } catch (error) {
         console.error(`Error processing file ${file.path}:`, error);
       }
+
+      // Update progress in database
+      if (i % 5 === 0 || i === filesToProcess.length - 1) {
+        await updateAnalysisProgress(analysisId, {
+          files_analyzed: processedFiles.length,
+          processed_files: processedFiles
+        });
+      }
     }
 
     if (codeSamples.length === 0) {
-      return res.status(404).json({ 
-        error: 'Could not fetch code content from repository files' 
+      await updateAnalysisProgress(analysisId, { 
+        status: 'failed', 
+        error_message: 'Could not fetch code content from repository files' 
+      });
+      if (stream) {
+        sendProgress(res, 'error', { error: 'Could not fetch code content from repository files' });
+        res.end();
+      } else {
+        return res.status(404).json({ error: 'Could not fetch code content from repository files' });
+      }
+      return;
+    }
+
+    // Step 3: Analyzing with AI
+    if (stream) {
+      sendProgress(res, 'progress', {
+        step: 'analyzing',
+        message: 'Analyzing code with AI...',
+        progress: 60,
+        filesAnalyzed: processedFiles.length
       });
     }
 
@@ -918,7 +1299,9 @@ ${codebaseSummary.map(sum => `
 ${sum.codeSample}
 `).join('\n\n')}
 
-Provide a comprehensive analysis in JSON format:
+CRITICAL: Respond with ONLY valid JSON. Do not include any explanatory text before or after the JSON. Start your response immediately with { and end with }.
+
+Provide a comprehensive analysis in JSON format (JSON ONLY, no markdown, no explanations):
 {
   "repository": "${repoUrl}",
   "branch": "${targetBranch}",
@@ -1003,53 +1386,221 @@ Provide a comprehensive analysis in JSON format:
       messages: [{ role: 'user', content: prompt }],
       stream: false
     }, {
-      timeout: 300000 // 5 minutes for comprehensive analysis
+      timeout: 300000
     });
 
+    // Parse and process results
+    let parsedResponse: any;
     try {
       const content = response.data.message.content;
-      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
-      const jsonStr = jsonMatch ? jsonMatch[1] : content;
-      const parsedResponse = JSON.parse(jsonStr);
-      res.json({
-        success: true,
-        ...parsedResponse,
+      
+      // Try multiple extraction methods
+      let jsonStr = '';
+      
+      // Method 1: Look for JSON in code blocks
+      let jsonMatch = content.match(/```json\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        jsonStr = jsonMatch[1];
+      } else {
+        // Method 2: Look for JSON in generic code blocks
+        jsonMatch = content.match(/```\n([\s\S]*?)\n```/);
+        if (jsonMatch) {
+          jsonStr = jsonMatch[1];
+        } else {
+          // Method 3: Look for JSON object in the text (starts with { and ends with })
+          const jsonStart = content.indexOf('{');
+          const jsonEnd = content.lastIndexOf('}');
+          if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+            jsonStr = content.substring(jsonStart, jsonEnd + 1);
+          } else {
+            jsonStr = content;
+          }
+        }
+      }
+      
+      // Clean up the JSON string
+      jsonStr = jsonStr.trim();
+      
+      // Try to parse
+      parsedResponse = JSON.parse(jsonStr);
+      
+      // Add metadata
+      parsedResponse.repository = repoUrl;
+      parsedResponse.branch = targetBranch;
+      parsedResponse.processedFiles = processedFiles;
+      parsedResponse.model = response.data.model;
+
+      // Save to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        files_analyzed: processedFiles.length,
+        modernization_score: parsedResponse.modernizationScore,
+        overall_severity: parsedResponse.overallSeverity,
+        result_data: parsedResponse
+      });
+
+      if (stream) {
+        sendProgress(res, 'progress', {
+          step: 'completed',
+          message: 'Analysis completed successfully',
+          progress: 100
+        });
+        sendProgress(res, 'result', parsedResponse);
+        sendProgress(res, 'done', { analysisId });
+        res.end();
+      } else {
+        res.json({
+          success: true,
+          analysisId,
+          ...parsedResponse
+        });
+      }
+    } catch (parseError) {
+      // Try to extract and parse JSON from the content one more time
+      let extractedData: any = null;
+      try {
+        const content = response.data.message.content;
+        
+        // Try to find and extract JSON more aggressively
+        const jsonStart = content.indexOf('{');
+        if (jsonStart !== -1) {
+          let braceCount = 0;
+          let jsonEnd = jsonStart;
+          
+          for (let i = jsonStart; i < content.length; i++) {
+            if (content[i] === '{') braceCount++;
+            if (content[i] === '}') braceCount--;
+            if (braceCount === 0) {
+              jsonEnd = i;
+              break;
+            }
+          }
+          
+          if (braceCount === 0) {
+            const extractedJson = content.substring(jsonStart, jsonEnd + 1);
+            extractedData = JSON.parse(extractedJson);
+          }
+        }
+      } catch (secondTryError) {
+        // If second try fails, just use the raw content
+      }
+
+      // Use extracted data if available, otherwise use fallback
+      const fallbackResponse = extractedData ? {
+        success: true, // Mark as success if we extracted the data
+        ...extractedData,
+        repository: repoUrl,
+        branch: targetBranch,
         processedFiles,
         model: response.data.model
-      });
-    } catch (parseError) {
-      res.json({
+      } : {
         success: false,
         analysis: response.data.message.content,
         repository: repoUrl,
         branch: targetBranch,
         processedFiles,
         model: response.data.model
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: extractedData ? 'completed' : 'completed',
+        files_analyzed: processedFiles.length,
+        modernization_score: extractedData?.modernizationScore,
+        overall_severity: extractedData?.overallSeverity,
+        result_data: fallbackResponse,
+        error_message: extractedData ? undefined : 'Failed to parse JSON response'
       });
+
+      if (stream) {
+        sendProgress(res, 'result', fallbackResponse);
+        sendProgress(res, 'done', { analysisId });
+        res.end();
+      } else {
+        res.json({
+          ...fallbackResponse,
+          analysisId
+        });
+      }
     }
   } catch (error) {
     console.error('Error analyzing codebase:', error);
-    if (axios.isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        return res.status(404).json({ 
-          error: 'Repository not found. Make sure it exists and is accessible.' 
-        });
-      }
-      if (error.response?.status === 403) {
-        return res.status(403).json({ 
-          error: 'GitHub API rate limit exceeded. Set GITHUB_TOKEN environment variable.' 
-        });
-      }
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
-    res.status(500).json({ 
-      error: 'Failed to analyze codebase',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
+
+    if (stream) {
+      sendProgress(res, 'error', {
+        error: 'Failed to analyze codebase',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+      res.end();
+    } else {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          return res.status(404).json({ 
+            error: 'Repository not found. Make sure it exists and is accessible.',
+            analysisId 
+          });
+        }
+        if (error.response?.status === 403) {
+          return res.status(403).json({ 
+            error: 'GitHub API rate limit exceeded. Set GITHUB_TOKEN environment variable.',
+            analysisId 
+          });
+        }
+      }
+      res.status(500).json({ 
+        error: 'Failed to analyze codebase',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        analysisId 
+      });
+    }
   }
 });
 
+// Get analysis history
+router.get('/analysis-history', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 50;
+    const offset = parseInt(req.query.offset as string) || 0;
+    const analysisType = req.query.type as string | undefined;
+    const history = await getAnalysisHistory(limit, offset, analysisType);
+    res.json({ 
+      history,
+      total: history.length,
+      limit,
+      offset 
+    });
+  } catch (error) {
+    console.error('Error fetching analysis history:', error);
+    res.status(500).json({ error: 'Failed to fetch analysis history' });
+  }
+});
+
+// Get specific analysis by ID
+router.get('/analysis/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const analysis = await getAnalysisById(id);
+    if (!analysis) {
+      return res.status(404).json({ error: 'Analysis not found' });
+    }
+    res.json(analysis);
+  } catch (error) {
+    console.error('Error fetching analysis:', error);
+    res.status(500).json({ error: 'Failed to fetch analysis' });
+  }
+});
+
+
 // OPTION 5b: Analyze dependencies from GitHub repository
 router.post('/analyze-dependencies-github', async (req, res) => {
+  let analysisId: number | null = null;
+  
   try {
     const { repoUrl, branch, path }: GitHubAnalysisRequest = req.body;
 
@@ -1060,16 +1611,16 @@ router.post('/analyze-dependencies-github', async (req, res) => {
     }
 
     // Parse GitHub URL
-    const parsed = parseGitHubUrl(repoUrl);
-    if (!parsed) {
+    const parsedUrl = parseGitHubUrl(repoUrl);
+    if (!parsedUrl) {
       return res.status(400).json({ 
         error: 'Invalid GitHub URL format. Use: https://github.com/owner/repo' 
       });
     }
 
-    const { owner, repo } = parsed;
-    const targetBranch = branch || parsed.branch;
-    const targetPath = path || parsed.path;
+    const { owner, repo } = parsedUrl;
+    const targetBranch = branch || parsedUrl.branch;
+    const targetPath = path || parsedUrl.path;
 
     let dependencies: Record<string, string> = {};
     let detectedLanguage = 'unknown';
@@ -1129,6 +1680,22 @@ router.post('/analyze-dependencies-github', async (req, res) => {
         error: 'No dependencies found in the repository' 
       });
     }
+
+    // Save query to database
+    analysisId = await saveAnalysisStart({
+      repository_url: repoUrl,
+      branch: branch || parsedUrl?.branch,
+      analysis_type: 'dependencies-github',
+      language: detectedLanguage,
+      query_parameters: {
+        repoUrl,
+        branch: branch || parsedUrl?.branch,
+        path,
+        detectedLanguage,
+        detectedFileType,
+        sourceFiles
+      }
+    });
 
     // Use the same analysis logic as the regular endpoint
     const depsList = Object.entries(dependencies)
@@ -1199,23 +1766,55 @@ Provide analysis in JSON format:
       const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/```\n([\s\S]*?)\n```/);
       const jsonStr = jsonMatch ? jsonMatch[1] : content;
       const parsedResponse = JSON.parse(jsonStr);
-      res.json({
+      
+      const resultData = {
         success: true,
         ...parsedResponse,
         model: response.data.model
+      };
+
+      // Save result to database
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: resultData,
+        modernization_score: parsedResponse.analysis?.totalDependencies ? 
+          Math.max(0, 100 - (parsedResponse.analysis.outdatedCount / parsedResponse.analysis.totalDependencies * 100)) : undefined
+      });
+
+      res.json({
+        analysisId,
+        ...resultData
       });
     } catch (parseError) {
-      res.json({
+      const fallbackResult = {
         success: false,
         analysis: response.data.message.content,
         repository: repoUrl,
         dependencies: dependencies,
         language: detectedLanguage,
         model: response.data.model
+      };
+
+      await updateAnalysisProgress(analysisId, {
+        status: 'completed',
+        result_data: fallbackResult,
+        error_message: 'Failed to parse JSON response'
+      });
+
+      res.json({
+        analysisId,
+        ...fallbackResult
       });
     }
   } catch (error) {
     console.error('Error analyzing GitHub dependencies:', error);
+    
+    if (analysisId) {
+      await updateAnalysisProgress(analysisId, {
+        status: 'failed',
+        error_message: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
         return res.status(404).json({ 

@@ -86,8 +86,14 @@ services:
     environment:
       OLLAMA_HOST: http://ollama:11434
       PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: lmra
+      DB_USER: lmra_user
+      DB_PASSWORD: lmra_password
     depends_on:
       - ollama
+      - postgres
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
       interval: 30s

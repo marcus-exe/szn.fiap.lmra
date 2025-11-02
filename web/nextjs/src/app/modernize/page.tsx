@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -111,44 +111,134 @@ export default function ModernizePage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'codebase' | 'github' | 'manual'>('codebase');
+  const [activeTab, setActiveTab] = useState<'codebase' | 'github' | 'manual' | 'history'>('codebase');
   const [language, setLanguage] = useState('');
   const [maxFiles, setMaxFiles] = useState(30);
+  const [progress, setProgress] = useState<{
+    step?: string;
+    message?: string;
+    progress?: number;
+    currentFile?: string;
+    filesProcessed?: number;
+    totalFiles?: number;
+    filesCount?: number;
+  } | null>(null);
+  const [analysisHistory, setAnalysisHistory] = useState<any[]>([]);
+  const [analysisId, setAnalysisId] = useState<number | null>(null);
 
   const handleCodebaseAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setResult(null);
     setError(null);
+    setProgress(null);
+    setAnalysisId(null);
 
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_AI || 'http://localhost:8082';
+      
+      // Use SSE for real-time progress
       const response = await fetch(`${API_URL}/api/modernization/analyze-codebase`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'text/event-stream',
         },
         body: JSON.stringify({
           repoUrl,
           branch: branch || undefined,
           language: language || undefined,
           maxFiles: maxFiles || 30,
+          stream: true,
         }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to analyze codebase');
+      if (!response.body) {
+        throw new Error('No response body');
       }
 
-      setResult(data);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        let currentEvent = '';
+        for (const line of lines) {
+          if (line.startsWith('event: ')) {
+            currentEvent = line.slice(7).trim();
+            continue;
+          }
+
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              
+              if (data.analysisId) {
+                setAnalysisId(data.analysisId);
+              }
+
+              // Handle based on event type or data content
+              if (currentEvent === 'error' || data.error) {
+                setError(data.error || 'An error occurred');
+                setLoading(false);
+              } else if (currentEvent === 'started') {
+                setProgress({ message: data.message || 'Analysis started', progress: 0 });
+              } else if (currentEvent === 'progress') {
+                setProgress({
+                  step: data.step,
+                  message: data.message,
+                  progress: data.progress || 0,
+                  currentFile: data.currentFile,
+                  filesProcessed: data.filesProcessed,
+                  totalFiles: data.totalFiles,
+                  filesCount: data.filesCount,
+                });
+              } else if (currentEvent === 'result') {
+                setResult(data);
+                setProgress({ step: 'completed', message: 'Analysis completed', progress: 100 });
+              } else if (currentEvent === 'done') {
+                setLoading(false);
+                fetchHistory(); // Refresh history after completion
+              }
+              currentEvent = ''; // Reset after processing
+            } catch (e) {
+              console.error('Error parsing SSE data:', e);
+            }
+          }
+        }
+      }
     } catch (err: any) {
       setError(err.message || 'An error occurred while analyzing the codebase');
-    } finally {
       setLoading(false);
     }
   };
+
+  const fetchHistory = async () => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_AI || 'http://localhost:8082';
+      const response = await fetch(`${API_URL}/api/modernization/analysis-history?limit=20`);
+      const data = await response.json();
+      if (data.history) {
+        setAnalysisHistory(data.history);
+      }
+    } catch (err) {
+      console.error('Error fetching history:', err);
+    }
+  };
+
+  // Fetch history on component mount
+  useEffect(() => {
+    if (activeTab === 'history') {
+      fetchHistory();
+    }
+  }, [activeTab]);
 
   const handleGitHubAnalysis = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -270,10 +360,10 @@ export default function ModernizePage() {
 
         {/* Tabs */}
         <div className="mb-6 border-b border-gray-700">
-          <div className="flex space-x-4">
+          <div className="flex space-x-4 overflow-x-auto">
             <button
               onClick={() => setActiveTab('codebase')}
-              className={`px-4 py-2 font-medium transition-colors ${
+              className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'codebase'
                   ? 'text-blue-400 border-b-2 border-blue-400'
                   : 'text-gray-400 hover:text-gray-300'
@@ -283,7 +373,7 @@ export default function ModernizePage() {
             </button>
             <button
               onClick={() => setActiveTab('github')}
-              className={`px-4 py-2 font-medium transition-colors ${
+              className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'github'
                   ? 'text-blue-400 border-b-2 border-blue-400'
                   : 'text-gray-400 hover:text-gray-300'
@@ -293,13 +383,26 @@ export default function ModernizePage() {
             </button>
             <button
               onClick={() => setActiveTab('manual')}
-              className={`px-4 py-2 font-medium transition-colors ${
+              className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
                 activeTab === 'manual'
                   ? 'text-blue-400 border-b-2 border-blue-400'
                   : 'text-gray-400 hover:text-gray-300'
               }`}
             >
               Manual Input
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab('history');
+                fetchHistory();
+              }}
+              className={`px-4 py-2 font-medium transition-colors whitespace-nowrap ${
+                activeTab === 'history'
+                  ? 'text-blue-400 border-b-2 border-blue-400'
+                  : 'text-gray-400 hover:text-gray-300'
+              }`}
+            >
+              History
             </button>
           </div>
         </div>
@@ -392,7 +495,201 @@ export default function ModernizePage() {
                   'Analyze Full Codebase'
                 )}
               </button>
+              
+              {/* Real-time Progress Display */}
+              {loading && progress && (
+                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-blue-400">{progress.message || 'Processing...'}</span>
+                    {progress.progress !== undefined && (
+                      <span className="text-sm text-gray-400">{progress.progress}%</span>
+                    )}
+                  </div>
+                  {progress.progress !== undefined && (
+                    <div className="w-full bg-gray-700 rounded-full h-2 mb-2">
+                      <div
+                        className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${progress.progress}%` }}
+                      />
+                    </div>
+                  )}
+                  {progress.currentFile && (
+                    <p className="text-xs text-gray-400 mt-2">
+                      Current file: <span className="font-mono">{progress.currentFile}</span>
+                    </p>
+                  )}
+                  {progress.filesProcessed !== undefined && progress.totalFiles !== undefined && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      Files: {progress.filesProcessed} / {progress.totalFiles}
+                    </p>
+                  )}
+                  {progress.filesCount && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      Total files found: {progress.filesCount}
+                    </p>
+                  )}
+                </div>
+              )}
             </form>
+          )}
+
+          {/* History Tab */}
+          {activeTab === 'history' && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-100">Analysis History</h2>
+                <button
+                  onClick={fetchHistory}
+                  className="px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition-colors text-sm"
+                >
+                  Refresh
+                </button>
+              </div>
+              
+              {analysisHistory.length === 0 ? (
+                <div className="text-center py-8 text-gray-400">
+                  <p>No analysis history yet. Run an analysis to see results here.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {analysisHistory.map((analysis) => (
+                    <div
+                      key={analysis.id}
+                      className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 hover:border-gray-600 transition-colors cursor-pointer"
+                      onClick={async () => {
+                        try {
+                          // Try to fetch the full analysis from API if result_data is not available
+                          let resultData = analysis.result_data;
+                          
+                          if (!resultData) {
+                            // Fetch full analysis from API
+                            const API_URL = process.env.NEXT_PUBLIC_API_AI || 'http://localhost:8082';
+                            const response = await fetch(`${API_URL}/api/modernization/analysis/${analysis.id}`);
+                            const fullAnalysis = await response.json();
+                            resultData = fullAnalysis.result_data || fullAnalysis;
+                          }
+                          
+                          // If result_data is a string, try to parse it
+                          if (typeof resultData === 'string') {
+                            try {
+                              const jsonStart = resultData.indexOf('{');
+                              if (jsonStart !== -1) {
+                                let braceCount = 0;
+                                let jsonEnd = jsonStart;
+                                for (let i = jsonStart; i < resultData.length; i++) {
+                                  if (resultData[i] === '{') braceCount++;
+                                  if (resultData[i] === '}') braceCount--;
+                                  if (braceCount === 0) {
+                                    jsonEnd = i;
+                                    break;
+                                  }
+                                }
+                                if (braceCount === 0) {
+                                  resultData = JSON.parse(resultData.substring(jsonStart, jsonEnd + 1));
+                                }
+                              }
+                            } catch (e) {
+                              console.error('Error parsing result_data:', e);
+                            }
+                          }
+                          
+                          // Ensure result data has the expected structure for visualization
+                          if (resultData && typeof resultData === 'object') {
+                            // Map database fields to expected fields for visualization
+                            if (!resultData.filesAnalyzed && analysis.files_analyzed !== undefined) {
+                              resultData.filesAnalyzed = analysis.files_analyzed;
+                            }
+                            if (!resultData.modernizationScore && analysis.modernization_score !== undefined) {
+                              resultData.modernizationScore = analysis.modernization_score;
+                            }
+                            if (!resultData.overallSeverity && analysis.overall_severity) {
+                              resultData.overallSeverity = analysis.overall_severity;
+                            }
+                            if (!resultData.repository && analysis.repository_url) {
+                              resultData.repository = analysis.repository_url;
+                            }
+                            if (!resultData.branch && analysis.branch) {
+                              resultData.branch = analysis.branch;
+                            }
+                            if (!resultData.processedFiles && analysis.processed_files) {
+                              resultData.processedFiles = analysis.processed_files;
+                            }
+                            
+                            // Ensure success flag is set if we have valid data
+                            if (resultData.criticalIssues || resultData.securityVulnerabilities || 
+                                resultData.deprecatedPatterns || resultData.dependencies || 
+                                resultData.summary || resultData.filesAnalyzed) {
+                              resultData.success = true;
+                            }
+                          } else {
+                            // If resultData is not an object, create a basic structure from analysis
+                            resultData = {
+                              success: analysis.status === 'completed',
+                              repository: analysis.repository_url,
+                              branch: analysis.branch,
+                              filesAnalyzed: analysis.files_analyzed,
+                              modernizationScore: analysis.modernization_score,
+                              overallSeverity: analysis.overall_severity,
+                              language: analysis.language,
+                              analysis_type: analysis.analysis_type
+                            };
+                          }
+                          
+                          setResult(resultData);
+                          setActiveTab('codebase');
+                        } catch (error) {
+                          console.error('Error loading analysis:', error);
+                          setError('Failed to load analysis details');
+                        }
+                      }}
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-semibold text-gray-100 mb-1">
+                            {analysis.repository_url 
+                              ? analysis.repository_url.split('/').slice(-2).join('/')
+                              : analysis.analysis_type || 'Analysis'}
+                          </h3>
+                          {analysis.branch && (
+                            <p className="text-sm text-gray-400 mb-2">Branch: {analysis.branch}</p>
+                          )}
+                          {!analysis.repository_url && analysis.language && (
+                            <p className="text-sm text-gray-400 mb-2">Language: {analysis.language}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${
+                            analysis.status === 'completed' ? 'bg-green-500/20 text-green-400' :
+                            analysis.status === 'in_progress' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-red-500/20 text-red-400'
+                          }`}>
+                            {analysis.status}
+                          </span>
+                          {analysis.modernization_score !== null && (
+                            <span className="px-2 py-1 rounded text-xs font-medium bg-blue-500/20 text-blue-400">
+                              Score: {analysis.modernization_score}/100
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                        {analysis.language && (
+                          <span>Language: {analysis.language}</span>
+                        )}
+                        {analysis.files_analyzed && (
+                          <span>Files: {analysis.files_analyzed}</span>
+                        )}
+                        {analysis.created_at && (
+                          <span>
+                            {new Date(analysis.created_at).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
 
           {/* GitHub Tab */}
@@ -932,13 +1229,163 @@ export default function ModernizePage() {
                 </div>
               )}
 
-              {/* Raw JSON fallback */}
-              {!result.success && (
+              {/* Fallback: Try to parse and display analysis if success is false but analysis field exists */}
+              {!result.success && result.analysis && typeof result.analysis === 'string' && (
+                <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-100 mb-4">Analysis Result</h3>
+                  
+                  {/* Try to extract JSON from the analysis string */}
+                  {(() => {
+                    try {
+                      // Try to find JSON in the analysis string
+                      const analysisText = result.analysis as string;
+                      const jsonStart = analysisText.indexOf('{');
+                      if (jsonStart !== -1) {
+                        let braceCount = 0;
+                        let jsonEnd = jsonStart;
+                        
+                        for (let i = jsonStart; i < analysisText.length; i++) {
+                          if (analysisText[i] === '{') braceCount++;
+                          if (analysisText[i] === '}') braceCount--;
+                          if (braceCount === 0) {
+                            jsonEnd = i;
+                            break;
+                          }
+                        }
+                        
+                        if (braceCount === 0) {
+                          const extractedJson = analysisText.substring(jsonStart, jsonEnd + 1);
+                          const parsed = JSON.parse(extractedJson);
+                          
+                          // Display structured data if we successfully parsed
+                          return (
+                            <>
+                              {parsed.modernizationScore !== undefined && (
+                                <div className="mb-4 p-4 bg-blue-500/20 rounded-lg">
+                                  <p className="text-sm text-blue-400 mb-1">Modernization Score</p>
+                                  <p className="text-2xl font-bold text-blue-400">{parsed.modernizationScore}/100</p>
+                                </div>
+                              )}
+                              
+                              {parsed.criticalIssues && parsed.criticalIssues.length > 0 && (
+                                <div className="mb-4 space-y-3">
+                                  <h4 className="text-lg font-semibold text-red-400 mb-2">Critical Issues</h4>
+                                  {parsed.criticalIssues.slice(0, 5).map((issue: any, i: number) => (
+                                    <div key={i} className="bg-red-500/10 border border-red-500/30 rounded p-3">
+                                      <div className="flex justify-between mb-1">
+                                        <span className="text-sm font-medium text-red-400">{issue.severity || 'Unknown'}</span>
+                                        <span className="text-xs text-gray-400">{issue.file}</span>
+                                      </div>
+                                      <p className="text-sm text-gray-300">{issue.issue || issue.description}</p>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              {parsed.securityVulnerabilities && parsed.securityVulnerabilities.length > 0 && (
+                                <div className="mb-4 space-y-3">
+                                  <h4 className="text-lg font-semibold text-red-400 mb-2">Security Vulnerabilities</h4>
+                                  {parsed.securityVulnerabilities.slice(0, 5).map((vuln: any, i: number) => (
+                                    <div key={i} className="bg-red-500/10 border border-red-500/30 rounded p-3">
+                                      <div className="flex justify-between mb-1">
+                                        <span className="text-sm font-medium text-red-400">{vuln.type}</span>
+                                        <span className="text-xs text-gray-400">{vuln.file}:{vuln.line}</span>
+                                      </div>
+                                      <p className="text-sm text-gray-300">{vuln.description}</p>
+                                      {vuln.fix && (
+                                        <p className="text-xs text-green-400 mt-1">Fix: {vuln.fix}</p>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              {parsed.deprecatedPatterns && parsed.deprecatedPatterns.length > 0 && (
+                                <div className="mb-4 space-y-3">
+                                  <h4 className="text-lg font-semibold text-orange-400 mb-2">Deprecated Patterns</h4>
+                                  {parsed.deprecatedPatterns.slice(0, 5).map((pattern: any, i: number) => (
+                                    <div key={i} className="bg-orange-500/10 border border-orange-500/30 rounded p-3">
+                                      <div className="flex justify-between mb-1">
+                                        <span className="text-sm font-medium text-orange-400">{pattern.pattern}</span>
+                                        <span className="text-xs text-gray-400">{pattern.count} occurrences</span>
+                                      </div>
+                                      <p className="text-sm text-gray-300">{pattern.description}</p>
+                                      {pattern.replacement && (
+                                        <p className="text-xs text-blue-400 mt-1">Replace with: {pattern.replacement}</p>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              
+                              {parsed.summary && (
+                                <div className="mt-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded">
+                                  <h4 className="text-sm font-semibold text-blue-400 mb-2">Summary</h4>
+                                  <div className="prose prose-sm prose-invert max-w-none">
+                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                      {parsed.summary}
+                                    </ReactMarkdown>
+                                  </div>
+                                </div>
+                              )}
+                              
+                              <div className="mt-4">
+                                <details className="text-sm">
+                                  <summary className="cursor-pointer text-gray-400 hover:text-gray-300 mb-2">
+                                    View Raw Analysis Text
+                                  </summary>
+                                  <pre className="text-xs text-gray-400 overflow-auto bg-gray-800 p-4 rounded mt-2 max-h-96">
+                                    {result.analysis}
+                                  </pre>
+                                </details>
+                              </div>
+                            </>
+                          );
+                        }
+                      }
+                      
+                      // Fallback: show formatted text
+                      return (
+                        <div className="prose prose-sm prose-invert max-w-none">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {result.analysis}
+                          </ReactMarkdown>
+                        </div>
+                      );
+                    } catch (e) {
+                      // Final fallback: show raw text
+                      return (
+                        <div className="prose prose-sm prose-invert max-w-none">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {result.analysis}
+                          </ReactMarkdown>
+                        </div>
+                      );
+                    }
+                  })()}
+                </div>
+              )}
+              
+              {/* Raw JSON fallback - only show if none of the structured fields exist */}
+              {!result.success && 
+               !result.analysis && 
+               !result.filesAnalyzed && 
+               !result.criticalIssues && 
+               !result.securityVulnerabilities && 
+               !result.deprecatedPatterns && 
+               !result.dependencies && 
+               !result.summary && (
                 <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-100 mb-2">Analysis Result</h3>
-                  <pre className="text-sm text-gray-300 overflow-auto bg-gray-800 p-4 rounded">
-                    {JSON.stringify(result, null, 2)}
-                  </pre>
+                  <p className="text-sm text-gray-400 mb-4">Raw data (no structured format available):</p>
+                  <details className="text-sm">
+                    <summary className="cursor-pointer text-gray-400 hover:text-gray-300 mb-2">
+                      View Raw JSON
+                    </summary>
+                    <pre className="text-xs text-gray-400 overflow-auto bg-gray-800 p-4 rounded mt-2 max-h-96">
+                      {JSON.stringify(result, null, 2)}
+                    </pre>
+                  </details>
                 </div>
               )}
             </div>

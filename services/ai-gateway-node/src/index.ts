@@ -2,12 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { initializeDatabase } from './db/connection';
 import { aiRoutes } from './routes/ai';
 import { modernizationRoutes } from './routes/modernization';
 import { healthRoutes } from './routes/health';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+// Initialize database on startup
+initializeDatabase().catch(console.error);
 
 // Middleware
 app.use(helmet());
