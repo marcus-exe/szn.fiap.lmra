@@ -1,0 +1,249 @@
+{
+  "common": {
+    "backToHome": "← Back to Home",
+    "refresh": "Refresh",
+    "loading": "Loading...",
+    "error": "Error",
+    "submit": "Submit",
+    "cancel": "Cancel"
+  },
+  "modernize": {
+    "title": "Legacy Code Modernization",
+    "subtitle": "Analyze dependencies and get modernization recommendations",
+    "tabs": {
+      "codebase": "Full Codebase Analysis",
+      "github": "Dependencies Only",
+      "manual": "Manual Input",
+      "history": "History"
+    },
+    "form": {
+      "repoUrl": "GitHub Repository URL",
+      "repoUrlPlaceholder": "https://github.com/owner/repo",
+      "repoUrlHelp": "Analyzes entire codebase for deprecated patterns and vulnerabilities.",
+      "branch": "Branch (optional)",
+      "branchPlaceholder": "main, develop, etc.",
+      "language": "Language (optional)",
+      "maxFiles": "Max Files",
+      "analyzeButton": "Analyze Full Codebase",
+      "analyzing": "Analyzing Codebase...",
+      "analyzeRepo": "Analyze Repository",
+      "analyzeDeps": "Analyze Dependencies"
+    },
+    "history": {
+      "title": "Analysis History",
+      "empty": "No analysis history yet. Run an analysis to see results here.",
+      "branch": "Branch",
+      "language": "Language",
+      "files": "Files",
+      "score": "Score"
+    },
+    "results": {
+      "codebaseAnalysis": "Codebase Analysis",
+      "repository": "Repository",
+      "filesAnalyzed": "Files Analyzed",
+      "languages": "Languages",
+      "modernizationScore": "Modernization Score",
+      "overallSeverity": "Overall Severity",
+      "criticalIssues": "Critical Issues",
+      "securityVulnerabilities": "Security Vulnerabilities",
+      "deprecatedPatterns": "Deprecated Patterns",
+      "summary": "Summary",
+      "dependencies": "Dependencies",
+      "upgradePlan": "Upgrade Plan"
+    }
+  },
+  "home": {
+    "title": "Legacy Modernization Reference Application",
+    "subtitle": "A comprehensive reference for modernizing legacy codebases",
+    "tickets": "Tickets",
+    "ticketsDesc": "Manage and track issues, tasks, and requests",
+    "users": "Users",
+    "usersDesc": "User management and authentication",
+    "ai": "AI Assistant",
+    "aiDesc": "AI-powered features powered by Ollama",
+    "modernize": "Code Modernization",
+    "modernizeDesc": "Analyze dependencies and modernize legacy code",
+    "docs": "Documentation",
+    "docsDesc": "Learn about the architecture and migration patterns"
+  },
+  "docs": {
+    "title": "Documentation",
+    "subtitle": "Learn about the architecture, migration patterns, and design decisions",
+    "migrationPlaybook": {
+      "title": "Migration Playbook",
+      "description": "Comprehensive guide for modernizing legacy applications to modern technologies",
+      "items": {
+        "java": "Java EE → Spring Boot 3",
+        "net": ".NET Framework → .NET 8",
+        "frontend": "jQuery → Next.js 14",
+        "android": "Android XML → Jetpack Compose"
+      }
+    },
+    "architectureDecisions": {
+      "title": "Architecture Decisions",
+      "description": "Key design decisions and rationale for this reference application",
+      "items": {
+        "adr1": "Microservices Architecture (ADR-001)",
+        "adr2": "Technology Stack Selection (ADR-002)",
+        "adr3": "PostgreSQL Database Choice (ADR-003)"
+      }
+    },
+    "quickStart": {
+      "title": "Quick Start Guide",
+      "prerequisites": {
+        "title": "1. Prerequisites",
+        "docker": "Docker and Docker Compose installed",
+        "git": "Git for cloning the repository",
+        "postgres": "PostgreSQL 16 (or use Docker)"
+      },
+      "running": {
+        "title": "2. Running the Application"
+      },
+      "accessPoints": {
+        "title": "3. Access Points",
+        "web": "Web UI: http://localhost:3000",
+        "users": "Users API: http://localhost:8080",
+        "tickets": "Tickets API: http://localhost:8081",
+        "ai": "AI Gateway: http://localhost:8082"
+      },
+      "architecture": {
+        "title": "4. Architecture Overview",
+        "description": "The application follows a microservices architecture with three main backend services:",
+        "usersService": "Users Service (Java/Spring Boot): User management and authentication",
+        "ticketsService": "Tickets Service (C#/.NET 8): Ticket and issue tracking system",
+        "aiGateway": "AI Gateway (Node.js/Express): AI-powered features using Ollama",
+        "webFrontend": "Web Frontend (Next.js): Modern React-based user interface"
+      }
+    },
+    "learnMore": {
+      "title": "Learn More",
+      "description": "For detailed migration guides and architecture decisions, refer to the documentation files in the /docs directory of the repository."
+    }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "User management and authentication",
+    "create": "Create User",
+    "loading": "Loading users...",
+    "searchPlaceholder": "Search users by email, first name, or last name...",
+    "noUsers": "No users found",
+    "table": {
+      "user": "User",
+      "role": "Role",
+      "status": "Status",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "viewDetails": "View Details",
+    "noName": "No name"
+  },
+  "usersCreate": {
+    "title": "Create New User",
+    "backToUsers": "← Back to Users",
+    "email": "Email",
+    "emailPlaceholder": "user@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "passwordHelp": "Password must be at least 8 characters long",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "John",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Doe",
+    "role": "Role",
+    "roles": {
+      "user": "User",
+      "admin": "Admin",
+      "moderator": "Moderator"
+    },
+    "creating": "Creating...",
+    "createButton": "Create User",
+    "error": "An error occurred while creating the user"
+  },
+  "tickets": {
+    "title": "Tickets",
+    "subtitle": "Manage and track issues, tasks, and requests",
+    "loading": "Loading tickets...",
+    "search": "Search",
+    "searchPlaceholder": "Search tickets...",
+    "filterStatus": "Filter by Status",
+    "allStatuses": "All Statuses",
+    "statuses": {
+      "open": "Open",
+      "inProgress": "In Progress",
+      "resolved": "Resolved",
+      "closed": "Closed",
+      "cancelled": "Cancelled"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "noTickets": "No tickets found",
+    "noDescription": "No description provided",
+    "createFirst": "Create First Ticket",
+    "createdBy": "Created by User",
+    "assignedTo": "Assigned to User",
+    "viewDetails": "View Details →",
+    "createNew": "Create New Ticket",
+    "ticket": "Ticket #",
+    "created": "Created"
+  },
+  "ticketsCreate": {
+    "title": "Create New Ticket",
+    "backToTickets": "← Back to Tickets",
+    "titleLabel": "Title",
+    "titlePlaceholder": "Enter ticket title...",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the issue or task...",
+    "priority": "Priority",
+    "creating": "Creating...",
+    "createButton": "Create Ticket",
+    "error": "Failed to create ticket",
+    "errorOccurred": "An error occurred while creating the ticket"
+  },
+  "ticketsDetail": {
+    "backToTickets": "← Back to Tickets",
+    "notFound": "Ticket not found",
+    "description": "Description",
+    "noDescription": "No description provided",
+    "createdBy": "Created By",
+    "assignedTo": "Assigned To",
+    "unassigned": "Unassigned",
+    "createdAt": "Created At",
+    "lastUpdated": "Last Updated"
+  },
+  "ai": {
+    "title": "AI Assistant",
+    "subtitle": "Powered by Ollama - Ask questions about the system or get help with modernizing legacy code",
+    "backToHome": "← Back to Home",
+    "yourMessage": "Your Message",
+    "messagePlaceholder": "Ask anything about microservices, modernizing legacy code, or this application...",
+    "streamingMode": "Real-time streaming mode",
+    "processing": "Processing...",
+    "sendMessage": "Send Message",
+    "response": "Response",
+    "waiting": "Waiting for response...",
+    "streaming": "Streaming...",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "tokens": "tokens",
+    "duration": "duration",
+    "tokPerSec": "tok/s",
+    "tokPerSecAvg": "tok/s (avg)",
+    "tokPerSecNow": "tok/s (now)",
+    "tryAsking": "Try asking:",
+    "suggestions": {
+      "architecture": "Explain the architecture of this microservices application",
+      "modernizeJava": "How do I modernize a legacy Java application?",
+      "netDifference": "What are the differences between .NET Framework and .NET 8?",
+      "containerization": "How does containerization help with deployment?"
+    },
+    "error": "Make sure Ollama is running."
+  }
+}

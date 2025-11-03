@@ -1,0 +1,249 @@
+{
+  "common": {
+    "backToHome": "← Voltar para Home",
+    "refresh": "Atualizar",
+    "loading": "Carregando...",
+    "error": "Erro",
+    "submit": "Enviar",
+    "cancel": "Cancelar"
+  },
+  "modernize": {
+    "title": "Modernização de Código Legado",
+    "subtitle": "Analise dependências e obtenha recomendações de modernização",
+    "tabs": {
+      "codebase": "Análise Completa do Código",
+      "github": "Apenas Dependências",
+      "manual": "Entrada Manual",
+      "history": "Histórico"
+    },
+    "form": {
+      "repoUrl": "URL do Repositório GitHub",
+      "repoUrlPlaceholder": "https://github.com/proprietario/repo",
+      "repoUrlHelp": "Analisa todo o código em busca de padrões obsoletos e vulnerabilidades.",
+      "branch": "Branch (opcional)",
+      "branchPlaceholder": "main, develop, etc.",
+      "language": "Linguagem (opcional)",
+      "maxFiles": "Máximo de Arquivos",
+      "analyzeButton": "Analisar Código Completo",
+      "analyzing": "Analisando Código...",
+      "analyzeRepo": "Analisar Repositório",
+      "analyzeDeps": "Analisar Dependências"
+    },
+    "history": {
+      "title": "Histórico de Análises",
+      "empty": "Nenhum histórico de análise ainda. Execute uma análise para ver os resultados aqui.",
+      "branch": "Branch",
+      "language": "Linguagem",
+      "files": "Arquivos",
+      "score": "Pontuação"
+    },
+    "results": {
+      "codebaseAnalysis": "Análise do Código",
+      "repository": "Repositório",
+      "filesAnalyzed": "Arquivos Analisados",
+      "languages": "Linguagens",
+      "modernizationScore": "Pontuação de Modernização",
+      "overallSeverity": "Severidade Geral",
+      "criticalIssues": "Problemas Críticos",
+      "securityVulnerabilities": "Vulnerabilidades de Segurança",
+      "deprecatedPatterns": "Padrões Obsoletos",
+      "summary": "Resumo",
+      "dependencies": "Dependências",
+      "upgradePlan": "Plano de Atualização"
+    }
+  },
+  "home": {
+    "title": "Aplicação de Referência para Modernização de Código Legado",
+    "subtitle": "Uma referência abrangente para modernizar bases de código legadas",
+    "tickets": "Tickets",
+    "ticketsDesc": "Gerencie e acompanhe problemas, tarefas e solicitações",
+    "users": "Usuários",
+    "usersDesc": "Gerenciamento de usuários e autenticação",
+    "ai": "Assistente de IA",
+    "aiDesc": "Recursos alimentados por IA usando Ollama",
+    "modernize": "Modernização de Código",
+    "modernizeDesc": "Analise dependências e modernize código legado",
+    "docs": "Documentação",
+    "docsDesc": "Aprenda sobre a arquitetura e padrões de migração"
+  },
+  "docs": {
+    "title": "Documentação",
+    "subtitle": "Aprenda sobre a arquitetura, padrões de migração e decisões de design",
+    "migrationPlaybook": {
+      "title": "Guia de Migração",
+      "description": "Guia abrangente para modernizar aplicações legadas para tecnologias modernas",
+      "items": {
+        "java": "Java EE → Spring Boot 3",
+        "net": ".NET Framework → .NET 8",
+        "frontend": "jQuery → Next.js 14",
+        "android": "Android XML → Jetpack Compose"
+      }
+    },
+    "architectureDecisions": {
+      "title": "Decisões de Arquitetura",
+      "description": "Principais decisões de design e justificativa para esta aplicação de referência",
+      "items": {
+        "adr1": "Arquitetura de Microserviços (ADR-001)",
+        "adr2": "Seleção de Stack Tecnológico (ADR-002)",
+        "adr3": "Escolha do Banco de Dados PostgreSQL (ADR-003)"
+      }
+    },
+    "quickStart": {
+      "title": "Guia de Início Rápido",
+      "prerequisites": {
+        "title": "1. Pré-requisitos",
+        "docker": "Docker e Docker Compose instalados",
+        "git": "Git para clonar o repositório",
+        "postgres": "PostgreSQL 16 (ou use Docker)"
+      },
+      "running": {
+        "title": "2. Executando a Aplicação"
+      },
+      "accessPoints": {
+        "title": "3. Pontos de Acesso",
+        "web": "Interface Web: http://localhost:3000",
+        "users": "API de Usuários: http://localhost:8080",
+        "tickets": "API de Tickets: http://localhost:8081",
+        "ai": "Gateway de IA: http://localhost:8082"
+      },
+      "architecture": {
+        "title": "4. Visão Geral da Arquitetura",
+        "description": "A aplicação segue uma arquitetura de microserviços com três principais serviços backend:",
+        "usersService": "Serviço de Usuários (Java/Spring Boot): Gerenciamento de usuários e autenticação",
+        "ticketsService": "Serviço de Tickets (C#/.NET 8): Sistema de rastreamento de tickets e problemas",
+        "aiGateway": "Gateway de IA (Node.js/Express): Recursos alimentados por IA usando Ollama",
+        "webFrontend": "Frontend Web (Next.js): Interface de usuário moderna baseada em React"
+      }
+    },
+    "learnMore": {
+      "title": "Saiba Mais",
+      "description": "Para guias detalhados de migração e decisões de arquitetura, consulte os arquivos de documentação no diretório /docs do repositório."
+    }
+  },
+  "users": {
+    "title": "Usuários",
+    "subtitle": "Gerenciamento de usuários e autenticação",
+    "create": "Criar Usuário",
+    "loading": "Carregando usuários...",
+    "searchPlaceholder": "Buscar usuários por e-mail, nome ou sobrenome...",
+    "noUsers": "Nenhum usuário encontrado",
+    "table": {
+      "user": "Usuário",
+      "role": "Função",
+      "status": "Status",
+      "created": "Criado",
+      "actions": "Ações"
+    },
+    "status": {
+      "active": "Ativo",
+      "inactive": "Inativo"
+    },
+    "viewDetails": "Ver Detalhes",
+    "noName": "Sem nome"
+  },
+  "usersCreate": {
+    "title": "Criar Novo Usuário",
+    "backToUsers": "← Voltar para Usuários",
+    "email": "E-mail",
+    "emailPlaceholder": "usuario@exemplo.com",
+    "password": "Senha",
+    "passwordPlaceholder": "Mínimo de 8 caracteres",
+    "passwordHelp": "A senha deve ter pelo menos 8 caracteres",
+    "firstName": "Nome",
+    "firstNamePlaceholder": "João",
+    "lastName": "Sobrenome",
+    "lastNamePlaceholder": "Silva",
+    "role": "Função",
+    "roles": {
+      "user": "Usuário",
+      "admin": "Administrador",
+      "moderator": "Moderador"
+    },
+    "creating": "Criando...",
+    "createButton": "Criar Usuário",
+    "error": "Ocorreu um erro ao criar o usuário"
+  },
+  "tickets": {
+    "title": "Tickets",
+    "subtitle": "Gerencie e acompanhe problemas, tarefas e solicitações",
+    "loading": "Carregando tickets...",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar tickets...",
+    "filterStatus": "Filtrar por Status",
+    "allStatuses": "Todos os Status",
+    "statuses": {
+      "open": "Aberto",
+      "inProgress": "Em Progresso",
+      "resolved": "Resolvido",
+      "closed": "Fechado",
+      "cancelled": "Cancelado"
+    },
+    "priorities": {
+      "low": "Baixa",
+      "medium": "Média",
+      "high": "Alta",
+      "critical": "Crítica"
+    },
+    "noTickets": "Nenhum ticket encontrado",
+    "noDescription": "Nenhuma descrição fornecida",
+    "createFirst": "Criar Primeiro Ticket",
+    "createdBy": "Criado por Usuário",
+    "assignedTo": "Atribuído ao Usuário",
+    "viewDetails": "Ver Detalhes →",
+    "createNew": "Criar Novo Ticket",
+    "ticket": "Ticket #",
+    "created": "Criado"
+  },
+  "ticketsCreate": {
+    "title": "Criar Novo Ticket",
+    "backToTickets": "← Voltar para Tickets",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Digite o título do ticket...",
+    "description": "Descrição",
+    "descriptionPlaceholder": "Descreva o problema ou tarefa...",
+    "priority": "Prioridade",
+    "creating": "Criando...",
+    "createButton": "Criar Ticket",
+    "error": "Falha ao criar ticket",
+    "errorOccurred": "Ocorreu um erro ao criar o ticket"
+  },
+  "ticketsDetail": {
+    "backToTickets": "← Voltar para Tickets",
+    "notFound": "Ticket não encontrado",
+    "description": "Descrição",
+    "noDescription": "Nenhuma descrição fornecida",
+    "createdBy": "Criado Por",
+    "assignedTo": "Atribuído A",
+    "unassigned": "Não atribuído",
+    "createdAt": "Criado Em",
+    "lastUpdated": "Última Atualização"
+  },
+  "ai": {
+    "title": "Assistente de IA",
+    "subtitle": "Alimentado por Ollama - Faça perguntas sobre o sistema ou obtenha ajuda para modernizar código legado",
+    "backToHome": "← Voltar para Home",
+    "yourMessage": "Sua Mensagem",
+    "messagePlaceholder": "Pergunte qualquer coisa sobre microserviços, modernização de código legado ou esta aplicação...",
+    "streamingMode": "Modo de transmissão em tempo real",
+    "processing": "Processando...",
+    "sendMessage": "Enviar Mensagem",
+    "response": "Resposta",
+    "waiting": "Aguardando resposta...",
+    "streaming": "Transmitindo...",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "tokens": "tokens",
+    "duration": "duração",
+    "tokPerSec": "tok/s",
+    "tokPerSecAvg": "tok/s (média)",
+    "tokPerSecNow": "tok/s (agora)",
+    "tryAsking": "Tente perguntar:",
+    "suggestions": {
+      "architecture": "Explique a arquitetura desta aplicação de microserviços",
+      "modernizeJava": "Como modernizo uma aplicação Java legada?",
+      "netDifference": "Quais são as diferenças entre .NET Framework e .NET 8?",
+      "containerization": "Como a containerização ajuda na implantação?"
+    },
+    "error": "Certifique-se de que o Ollama está em execução."
+  }
+}
