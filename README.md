@@ -67,7 +67,8 @@ challenge_2025/
    - Responsibilities: Primary user interface
    - Authentication: AWS Cognito
    - Port: 3000
-   - UI Features: Modern dark theme with black background, animated DNA helix visualization, rolling slider with Chinese phrase, Arimo font family
+   - **Internationalization**: Full support for English and Portuguese with `next-intl`
+   - UI Features: Modern dark theme with black background, animated DNA helix visualization, rolling slider with Chinese phrase, Arimo font family, language switcher
 
 2. **Android Application**
    - Technology: Kotlin 2.x, Jetpack Compose
@@ -149,6 +150,11 @@ See `docs/migration-playbook.md` for detailed guides.
 
 The web application features a modern, minimalist design:
 
+- **Internationalization (i18n)**: Full support for English and Portuguese languages
+  - Language switcher in top-right corner on all pages
+  - Locale-aware routing (`/en/*` and `/pt/*`)
+  - All user-facing text translated
+  - Automatic locale detection and persistence
 - **Dark Theme**: Full black background with a subtle white grid pattern for depth
 - **Animated DNA Visualization**: Interactive 3D canvas-based DNA helix animation with continuous rotation
 - **Rolling Slider**: Infinite-scrolling banner with the Chinese phrase "现代化旧代码库的完整参考指南" (A comprehensive reference guide for modernizing legacy codebases)

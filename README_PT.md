@@ -67,7 +67,8 @@ challenge_2025/
    - Responsabilidades: Interface primária do usuário
    - Autenticação: AWS Cognito
    - Porta: 3000
-   - Recursos de UI: Tema escuro moderno com fundo preto, visualização animada de hélice de DNA, slider rolante com frase em chinês, família de fontes Arimo
+   - **Internacionalização**: Suporte completo para inglês e português com `next-intl`
+   - Recursos de UI: Tema escuro moderno com fundo preto, visualização animada de hélice de DNA, slider rolante com frase em chinês, família de fontes Arimo, seletor de idioma
 
 2. **Aplicação Android**
    - Tecnologia: Kotlin 2.x, Jetpack Compose
@@ -149,6 +150,11 @@ Veja `docs/migration-playbook.md` para guias detalhados.
 
 A aplicação web apresenta um design moderno e minimalista:
 
+- **Internacionalização (i18n)**: Suporte completo para inglês e português
+  - Seletor de idioma no canto superior direito em todas as páginas
+  - Roteamento baseado em locale (`/en/*` e `/pt/*`)
+  - Todo texto voltado ao usuário traduzido
+  - Detecção automática de locale e persistência
 - **Tema Escuro**: Fundo preto completo com um padrão de grade branca sutil para profundidade
 - **Visualização Animada de DNA**: Animação interativa de hélice de DNA em 3D baseada em canvas com rotação contínua
 - **Slider Rolante**: Banner com rolagem infinita com a frase em chinês "现代化旧代码库的完整参考指南" (Um guia de referência abrangente para modernizar bases de código legadas)
