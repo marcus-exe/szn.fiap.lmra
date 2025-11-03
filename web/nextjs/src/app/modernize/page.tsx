@@ -347,7 +347,7 @@ export default function ModernizePage() {
   };
 
   return (
-    <div className="p-8 min-h-screen bg-gradient-to-b from-gray-900 to-black">
+    <div className="p-8 min-h-screen">
       <div className="max-w-6xl mx-auto">
         <Link href="/" className="text-blue-400 hover:text-blue-300 mb-4 inline-block transition-colors">
           ← Back to Home
@@ -482,6 +482,15 @@ export default function ModernizePage() {
                 type="submit"
                 disabled={loading || !repoUrl}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                style={{ background: '#2563eb', backgroundImage: 'none' }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = '#1d4ed8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#2563eb';
+                }}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -745,6 +754,15 @@ export default function ModernizePage() {
                 type="submit"
                 disabled={loading || !repoUrl}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                style={{ background: '#2563eb', backgroundImage: 'none' }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = '#1d4ed8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#2563eb';
+                }}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -804,6 +822,15 @@ export default function ModernizePage() {
                 type="submit"
                 disabled={loading}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                style={{ background: '#2563eb', backgroundImage: 'none' }}
+                onMouseEnter={(e) => {
+                  if (!e.currentTarget.disabled) {
+                    e.currentTarget.style.background = '#1d4ed8';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = '#2563eb';
+                }}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
